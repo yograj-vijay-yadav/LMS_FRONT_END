@@ -17,3 +17,9 @@ If you are developing a production application, we recommend using TypeScript wi
  Tailwind --> npm install tailwindcss @tailwindcss/cli
  installation-->  npm install @reduxjs/toolkit react-icons react-router-dom react-redux react-chartjs-2 chart.js daisyui axios react-hot-toast @tailwindcss/line-clamp
 ```
+
+## configure autoimport sort eslint
+```
+  install simple import sort
+  npm i -D eslint-plugin-simple-import-sort
+```
