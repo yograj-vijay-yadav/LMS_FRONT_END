@@ -1,12 +1,15 @@
-import js from '@eslint/js'
-import { defineConfig, globalIgnores } from 'eslint/config'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import simpleImportSort from 'eslint-plugin-simple-import-sort'
-import globals from 'globals'
+import js from '@eslint/js';
+import { defineConfig, globalIgnores } from 'eslint/config';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import globals from 'globals';
 
 export default defineConfig([
+  // Ignore dist folder globally
   globalIgnores(['dist']),
+
+  // JS/JSX specific configuration
   {
     files: ['**/*.{js,jsx}'],
     extends: [
@@ -19,8 +22,10 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: {
         ecmaVersion: 'latest',
-        ecmaFeatures: { jsx: true },
         sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
     },
     plugins: {
@@ -32,4 +37,4 @@ export default defineConfig([
       'simple-import-sort/exports': 'error',
     },
   },
-])
+]);
