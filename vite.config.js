@@ -7,8 +7,8 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     watch: {
-      usePolling: true,   // 👈 force file watching
-      interval: 100,      // check for changes every 100ms
+      usePolling: true,   // fix for Windows / WSL file change detection
+      interval: 100,
     },
   },
 })
