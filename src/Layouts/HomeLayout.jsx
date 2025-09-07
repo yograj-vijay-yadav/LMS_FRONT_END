@@ -47,11 +47,11 @@ function HomeLayout({ children }) {
             )}
             <li><Link to="/courses">Courses</Link></li>
             <li><Link to="/articles">Articles</Link></li>
-            <li><Link to="/contact">Contact Us</Link></li>
+            <li><Link to="/about">About Us</Link></li>
 
             {/* Auth buttons pinned bottom */}
             <li className="absolute bottom-4 w-full">
-              <div className="flex items-center justify-center gap-4 mr-6 mb-[700px]">
+              <div className="flex items-center justify-center gap-4 mr-6">
                 {!isLoggedIn ? (
                   <>
                     <Link to="/login" className="btn btn-primary flex-1">
