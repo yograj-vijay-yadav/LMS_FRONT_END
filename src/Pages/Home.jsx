@@ -9,9 +9,9 @@ function Home() {
        return (
         <HomeLayout>
             <div className="pt-10 text-white flex items-center justify-center gap-10 ml-[100px] mx-16 h-[90vh]">
-                <div className="w-3/4 space-y-6">
-                    <h1 className="text-5xl font-semibold">Find out best <span className="text-yellow-500 font-bold">Online courses</span></h1>
-                    <p className="text-xl text-gray-200">
+                <div className="w-4/5 space-y-6">
+                    <h1 className="text-6xl font-semibold">Find out best <span className="text-yellow-500 font-bold">Online courses</span></h1>
+                    <p className="text-xl text-gray-200 w-3/4">
                         We have a large library of courses taught by highly skilled and qualified faculties at a very affordable cose.
                     </p>
 
@@ -29,7 +29,7 @@ function Home() {
                     </div>
                 </div>
                 
-                <div className="w-1/2 ml-[100px] flex items-center justify-center">
+                <div className="w-3/4 ml-[100px] flex items-center justify-center">
                     <img  src={Homepage} alt="home page" className="ml-[50px]"/>
                 </div>
 
