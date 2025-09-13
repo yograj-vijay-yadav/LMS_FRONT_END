@@ -61,7 +61,7 @@ function Contact() {
                 <form  
                     noValidate
                     onSubmit={onFormSubmit}
-                    className="flex flex-col items-center justify-center gap-2 p-5 rounded-md text-white shadow-[0_0_10px_black] w-[24rem] h-[32rem] justify-evenly">
+                    className="flex flex-col items-center justify-center gap-2 p-5 rounded-md text-white shadow-[0_0_10px_black] w-[24rem] h-[32rem] ">
 
                     <h1 className="text-3xl font-semibold">
                         Contact Form
