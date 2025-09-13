@@ -33,7 +33,6 @@ function CourseList() {
                     })}
                 </div>
 
-
             </div>
         </HomeLayout>  
     );
