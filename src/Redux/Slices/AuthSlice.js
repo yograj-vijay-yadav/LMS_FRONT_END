@@ -10,6 +10,7 @@ const initialState = {
     data: localStorage.getItem('data') || {}
 };
 
+
 export  const createAccount = createAsyncThunk("/auth/signup", async (data) => {
     try {
         const res = axiosInstance.post("user/register", data);
@@ -58,6 +59,8 @@ export const logout = createAsyncThunk("/auth/logout", async () => {
         toast.error(error?.response?.data?.message);
     }
 })
+
+
 
 const authSlice = createSlice({
     name: 'auth',

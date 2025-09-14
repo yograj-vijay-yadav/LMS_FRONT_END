@@ -43,11 +43,11 @@ function HomeLayout({ children }) {
 
             {/* Navigation links */}
             <li><Link to="/">Home</Link></li>
-            {isLoggedIn && role === "ADMIN" && (
-              <li><Link to="/admin/dashboard">Admin Dashboard</Link></li>
-            )}
-            <li><Link to="/courses">Courses</Link></li>
-            <li><Link to="/articles">Articles</Link></li>
+            <li> {isLoggedIn && role === "ADMIN" && (
+              <Link to="/course/create"> Create new course</Link>
+            )}</li>
+            <li><Link to="/courses">All Courses</Link></li>
+            <li><Link to="/contact">Contact Us</Link></li>
             <li><Link to="/about">About Us</Link></li>
 
             {/* Auth buttons pinned bottom */}
