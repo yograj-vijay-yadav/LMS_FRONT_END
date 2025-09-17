@@ -91,7 +91,7 @@ function CreateCourse() {
                                             className="w-full h-44 m-auto border"
                                             src={userInput.previewImage}
                                         />
-                                    ): (
+                                    ) : (
                                         <div className="w-full h-44 m-auto flex items-center justify-center border">
                                             <h1 className="font-bold text-lg">Upload your course thumbnail</h1>
                                         </div>
