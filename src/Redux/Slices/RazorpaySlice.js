@@ -102,7 +102,7 @@ const razorpaySlice = createSlice({
             state.monthlySalesRecord = action?.payload?.monthlySalesRecord;
         })
         
-    }
+    }                                                                            
 });
 
 export default razorpaySlice.reducer;

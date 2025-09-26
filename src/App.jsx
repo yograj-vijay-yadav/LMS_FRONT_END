@@ -18,7 +18,9 @@ import EditProfile from './Pages/User/EditProfile'
 import Checkout from './Pages/Payments/Checkout'
 import CheckoutSuccess from './Pages/Payments/CheckoutSuccess'
 import CheckoutFailure from './Pages/Payments/CheckoutFailure'
-import Displaylectures from './Pages/Dashboard/Displaylectures'
+import Displaylectures from './Pages/Dashboard/DisplayLectures'
+import AddLecture from './Pages/Dashboard/AddLecture'
+import AdminDashboard from './Pages/Dashboard/AdminDashboard'
 function App() {
 
   return ( 
@@ -34,7 +36,9 @@ function App() {
       <Route path="denied" element={<Denied />} />
       <Route path="/course/description" element={<CourseDescription />} />
       <Route element={<RequireAuth allowedRoles={["ADMIN"]} />}>
-          <Route path="/course/create" element={<CreateCourse />} />
+           <Route path="/course/create" element={<CreateCourse />} />
+           <Route path="/course/addlecture" element={<AddLecture />} />
+           <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Route>
        <Route element={<RequireAuth allowedRoles={["ADMIN", "USER"]} />}>
               <Route path='/user/profile' element={<Profile />} />
