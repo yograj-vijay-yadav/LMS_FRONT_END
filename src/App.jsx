@@ -21,9 +21,15 @@ import CheckoutFailure from './Pages/Payments/CheckoutFailure'
 import Displaylectures from './Pages/Dashboard/DisplayLectures'
 import AddLecture from './Pages/Dashboard/AddLecture'
 import AdminDashboard from './Pages/Dashboard/AdminDashboard'
+import LenisScroll from './Components/LenisScroll'
+
+
 function App() {
 
   return ( 
+    <>
+
+   <LenisScroll />
   
     <Routes>
       
@@ -52,6 +58,7 @@ function App() {
 
       <Route  path='*' element={<NotFound/>} />
     </Routes>
+    </>
   )
 }
 

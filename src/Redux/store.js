@@ -13,7 +13,7 @@ const store = configureStore({
     razorpay: razorpaySliceReducer,
     lecture: lectureSliceReducer,
     stat: statSliceReducer
-
+        
   },
   devTools: true,
 });

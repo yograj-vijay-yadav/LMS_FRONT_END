@@ -1,10 +1,86 @@
+/* 1️⃣ ALL imports first */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import "tailwindcss";
 @plugin "daisyui";
 
-body {
-  width:auto;
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-
+@theme {
+    --font-poppins: "Poppins", sans-serif;
 }
+
+body {
+    @apply bg-black text-white text-sm antialiased font-poppins;
+}
+
+body::selection {
+    @apply bg-pink-600 text-white;
+}
+
+button {
+    @apply cursor-pointer;
+}
+
+.move-gradient {
+  background-image: linear-gradient(
+    to right,
+    #ec4899,
+    #f9a8d4
+  );
+  background-size: 200% 100%;
+  animation: movegradient 5s infinite;
+}
+
+@keyframes movegradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+/* :root {
+  --radius: 0.5rem;
+  --background: oklch(1.00000 0.00000 0);
+  --foreground: oklch(0.14100 0.00500 285.82300);
+  --card: oklch(1.00000 0.00000 0);
+  --card-foreground: oklch(0.14100 0.00500 285.82300);
+  --popover: oklch(1.00000 0.00000 0);
+  --popover-foreground: oklch(0.14100 0.00500 285.82300);
+  --primary: oklch(0.58588 0.22209 17.55490);
+  --primary-foreground: oklch(0.14100 0.00500 285.82300);
+  --secondary: oklch(0.96756 0.00133 286.37516);
+  --secondary-foreground: oklch(0.14100 0.00500 285.82300);
+  --accent: oklch(0.96756 0.00133 286.37516);
+  --accent-foreground: oklch(0.14100 0.00500 285.82300);
+  --destructive: oklch(0.63683 0.20776 25.32589);
+  --destructive-foreground: oklch(0.98500 0.00000 0.00000);
+  --muted: oklch(0.96955 0.00000 0);
+  --muted-foreground: oklch(0.14100 0.00500 285.82300);
+  --border: oklch(0.91944 0.00664 2.04430);
+  --input: oklch(0.91944 0.00664 2.04430);
+  --ring: oklch(0.58588 0.22209 17.55490);
+}
+
+.dark {
+  --background: oklch(0.14668 0.00412 49.31415);
+  --foreground: oklch(0.98500 0.00000 0.00000);
+  --card: oklch(0.21612 0.00612 56.04353);
+  --card-foreground: oklch(0.98500 0.00000 0.00000);
+  --popover: oklch(0.19954 0.00892 3.05193);
+  --popover-foreground: oklch(0.98500 0.00000 0.00000);
+  --primary: oklch(0.58588 0.22209 17.55490);
+  --primary-foreground: oklch(0.14100 0.00500 285.82300);
+  --secondary: oklch(0.27412 0.00548 286.03291);
+  --secondary-foreground: oklch(0.98500 0.00000 0.00000);
+  --accent: oklch(0.26850 0.00629 34.29756);
+  --accent-foreground: oklch(0.98500 0.00000 0.00000);
+  --destructive: oklch(0.63683 0.20776 25.32589);
+  --destructive-foreground: oklch(0.98500 0.00000 0.00000);
+  --muted: oklch(0.26905 0.01292 48.21802);
+  --muted-foreground: oklch(0.98500 0.00000 0.00000);
+  --border: oklch(0.27126 0.01467 3.30096);
+  --input: oklch(0.27126 0.01467 3.30096);
+  --ring: oklch(0.58588 0.22209 17.55490);
+} */

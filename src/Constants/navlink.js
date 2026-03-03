@@ -1,27 +1,14 @@
-import Footer from "../components/footer";
-import Navbar from "../Components/Navbar";
 
+export const navlinks= [
+    { name: "Home", href: "/" },
+    { name: "Admin dashboard", href: "/admin/dashboard" },
+    { name: "Features", href: "#features" },
+    { name: "Testimonials", href: "#testimonials" },
+    { name: "Pricing", href: "#pricing" },
+    {name: "All Courses", href: "/courses" },
+   
 
-function HomeLayout({ children }) {
-  return (
-    <div className="min-h-screen w-full bg-black">  
-      <Navbar />
-      <main className="flex-grow">{children}</main>
-      <Footer />
-    </div>
-  );
-}
-
-export default HomeLayout;
-
-
-
-
-
-
-
-
-
+     
       //  <li><Link to="/">Home</Link></li>
       //       <li><Link to="/admin/dashboard">Admin Dashboard</Link></li>
       //       <li> {isLoggedIn && role === "ADMIN" && (
@@ -30,3 +17,4 @@ export default HomeLayout;
       //       <li><Link to="/courses">All Courses</Link></li>
       //       <li><Link to="/contact">Contact Us</Link></li>
       //       <li><Link to="/about">About Us</Link></li>
+];

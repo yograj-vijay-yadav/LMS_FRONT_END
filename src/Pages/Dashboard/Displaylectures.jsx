@@ -68,7 +68,7 @@ function Displaylectures() {
                         <li className="font-semibold text-xl text-yellow-500 flex items-center justify-between">
                             <p>Lectures list</p>
                             {role === "ADMIN" && (
-                                <button onClick={() => navigate("/course/addlecture", {state: {...state}})} className="btn-primary px-2 py-1 rounded-md font-semibold text-sm">
+                                <button onClick={() => navigate("/course/addlecture", {state: {...state}})} className="btn-accent text-amber-50 bg-green-600 px-2 py-1 rounded-md font-semibold text-sm">
                                     Add new lecture
                                 </button>
                             )}
@@ -84,8 +84,8 @@ function Displaylectures() {
                                             {lecture?.title}
                                         </p>
                                         {role === "ADMIN" && (
-                                            <button onClick={() => onLectureDelete(state?._id, lecture?._id)} className="btn-accent px-2 py-1 rounded-md font-semibold text-sm">
-                                                Delete lecture
+                                            <button onClick={() => onLectureDelete(state?._id, lecture?._id)} className="btn-accent bg-red-600 px-2 py-1 rounded-md font-semibold text-sm">
+                                                Delete Lecture
                                             </button>
                                         )}
                                     </li>
@@ -94,7 +94,7 @@ function Displaylectures() {
                         }
                    </ul>
                 </div>) :  (role === "ADMIN" && (
-                                <button onClick={() => navigate("/course/addlecture", {state: {...state}})} className="btn-accent bg-primary w-auto h-auto px-2 py-1 rounded-md font-semibold text-md">
+                                <button onClick={() => navigate("/course/addlecture", {state: {...state}})} className="btn-accent bg-green-600 px-2 py-1 rounded-md font-semibold text-sm">
                                     Add new lecture
                                 </button>
                             ))}
