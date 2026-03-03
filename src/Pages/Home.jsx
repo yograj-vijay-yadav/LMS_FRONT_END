@@ -10,9 +10,9 @@ function Home() {
         <HomeLayout>
             <div className="pt-10 text-white flex items-center justify-center gap-10 ml-[100px] mx-16 h-[90vh]">
                 <div className="w-4/5 space-y-6">
-                    <h1 className="text-6xl font-semibold">Find out best <span className="text-yellow-500 font-bold">Online courses</span></h1>
+                    <h1 className="text-6xl font-semibold">Find the best <span className="text-yellow-500 font-bold">online courses</span></h1>
                     <p className="text-xl text-gray-200 w-3/4">
-                        We have a large library of courses taught by highly skilled and qualified faculties at a very affordable cose.
+                        We have a large library of courses taught by highly skilled and qualified instructors at a very affordable cost.
                     </p>
 
                     <div className="space-x-6">
@@ -21,7 +21,7 @@ function Home() {
                                 Explore courses
                             </button>
                         </Link>
-                        <Link to="/contacts" >
+                        <Link to="/contact" >
                             <button className="border border-yellow-500 px-5 py-3 rounded-md font-semibold text-lg cursor-pointer hover:bg-yellow-600 transition-all ease-in-out duration-300">
                                 Contact Us
                             </button>

@@ -1,7 +1,8 @@
 import { AiFillCloseCircle } from "react-icons/ai";
 import { FiMenu } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
-import Footer from "../components/footer";
+import Footer from "../Components/Footer";
+import ChatbotWidget from "../Components/ChatbotWidget";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../Redux/Slices/AuthSlice";
 
@@ -90,6 +91,7 @@ function HomeLayout({ children }) {
 
       {/* Footer */}
       <Footer />
+      <ChatbotWidget />
     </div>
   );
 }

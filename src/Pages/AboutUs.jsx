@@ -1,4 +1,4 @@
-import aboutMainPage from "../Assets/Images/aboutMainPage.png";
+import aboutMainPage from "../Assets/Images/aboutMainpage.png";
 
 import HomeLayout from "../Layouts/HomeLayout";
 import CarouselSlide from "../Components/CarouselSlide";
