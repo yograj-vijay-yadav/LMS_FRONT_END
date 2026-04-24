@@ -3,7 +3,7 @@ import Faqs from "../Components/Faqs";
 import HomeLayout from "../Layouts/HomeLayout";
 import FeaturesSection from "../Components/FeatureSection";
 import SimplePricing from "../Components/Pricing";
-import ChatbotWidget from "../Components/chatbotWidget";
+
 function Home() {
     
        return (
@@ -13,7 +13,6 @@ function Home() {
             <FeaturesSection />
             <SimplePricing />
             <Faqs />
-            <ChatbotWidget />
         </HomeLayout>
         </div>
        
