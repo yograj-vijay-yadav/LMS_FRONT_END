@@ -18,6 +18,14 @@ const initialState = {
   data: safeParse(localStorage.getItem("data")),
 };
 
+const getTokenFromPayload = (payload) =>
+  payload?.token ||
+  payload?.accessToken ||
+  payload?.jwtToken ||
+  payload?.user?.token ||
+  "";
+
+
 
 export const createNewCourse = createAsyncThunk("/course/create", async (data) => {
     try {
@@ -61,6 +69,7 @@ export  const createAccount = createAsyncThunk("/auth/signup", async (data) => {
 export const login = createAsyncThunk("/auth/login", async (data) => {
     try {
         const res = axiosInstance.post("user/login", data);
+        
         toast.promise(res, {
             loading: "Wait! authentication in progress...",
             success: (data) => {
@@ -118,7 +127,6 @@ export const getUserData = createAsyncThunk("/user/details", async () => {
 
 
 
-
 const authSlice = createSlice({
     name: 'auth',
     initialState,
@@ -126,10 +134,14 @@ const authSlice = createSlice({
     extraReducers: (builder) => {
       builder
         .addCase(login.fulfilled, (state, action) => {
-            console.log(state)
+            // console.log(state)
+            const token = getTokenFromPayload(action?.payload);
             localStorage.setItem("data", JSON.stringify(action?.payload?.user));
             localStorage.setItem("isLoggedIn", true);
             localStorage.setItem("role", action?.payload?.user?.role);
+            if (token) {
+              localStorage.setItem("token", token);
+            }
             state.isLoggedIn = true;
             state.data = action?.payload?.user;
             state.role = action?.payload?.user?.role
@@ -142,9 +154,13 @@ const authSlice = createSlice({
         })
         .addCase(getUserData.fulfilled, (state, action) => {
             if(!action?.payload?.user) return;
+            const token = getTokenFromPayload(action?.payload);
             localStorage.setItem("data", JSON.stringify(action?.payload?.user));
             localStorage.setItem("isLoggedIn", true);
             localStorage.setItem("role", action?.payload?.user?.role);
+            if (token) {
+              localStorage.setItem("token", token);
+            }
             state.isLoggedIn = true;
             state.data = action?.payload?.user;
             state.role = action?.payload?.user?.role
@@ -153,3 +169,5 @@ const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
+
+

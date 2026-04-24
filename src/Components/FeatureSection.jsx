@@ -7,9 +7,9 @@ export default function FeaturesSection() {
     return (
         <div id="features" className="px-4 md:px-16 lg:px-24 xl:px-32">
             <SectionTitle 
-                text1="Features" 
-                text2="What you get" 
-                text3="Components, patterns and pages — everything you need to ship." 
+                text1="LMS Features"
+                text2="Everything you need to teach and learn"
+                text3="From content delivery to learner progress reporting—run your full learning lifecycle in one platform."
             />
             <div className="flex flex-wrap items-center justify-center gap-6 md:gap-4 mt-16 px-6">
                 {featuresData.map((feature, index) => (
@@ -41,9 +41,10 @@ export default function FeaturesSection() {
                     whileInView={{ y: 0, opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ type: "spring", stiffness: 320, damping: 70, mass: 1 }}
-                >
-                    PrebuiltUI helps you build faster by transforming your design vision into fully functional, production-ready UI components.
-                </motion.p>
+                 >
+                   Keep instructors, learners, and admins aligned with a single dashboard for assignments, attendance,
+                    quizzes, and certification workflows.     
+               </motion.p>
                 <div className="grid grid-cols-1 md:grid-cols-3 mt-8 gap-10">
                     <motion.div 
                         className="md:col-span-2"
@@ -75,16 +76,12 @@ export default function FeaturesSection() {
                             className="hover:-translate-y-0.5 transition duration-300" 
                         />
                         <h3 className="text-[24px]/7.5 text-slate-300 font-medium mt-6">
-                            Better design with highest revenue and profits 
+                            Manage outcomes, not just content 
                         </h3>
                         <p className="text-slate-300 mt-2">
-                            PrebuiltUI empowers you to build beautifully and scale effortlessly.
-                        </p>
-                        <a 
-                            href="https://prebuiltui.com" 
-                            className="group flex items-center gap-2 mt-4 text-pink-600 hover:text-pink-700 transition"
-                        >
-                            Learn more about the product
+                            Get actionable insights on learner engagement, assessment performance, and completion trends.                        </p>
+                        <a href="/courses" className="group flex items-center gap-2 mt-4 text-pink-600 hover:text-pink-700 transition">
+                            Browse all courses
                             <ArrowUpRight className="size-5 group-hover:translate-x-0.5 transition duration-300" />
                         </a>
                     </motion.div>
