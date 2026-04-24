@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import HomeLayout from "../../Layouts/HomeLayout";
 import { deleteCourseLecture, getCourseLectures } from "../../Redux/Slices/LectureSlice";
 
-function Displaylectures() {
+function DisplayLectures() {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -103,4 +103,4 @@ function Displaylectures() {
     );
 }
 
-export default Displaylectures;
+export default DisplayLectures;
