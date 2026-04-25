@@ -1,4 +1,4 @@
-import SectionTitle from "../components/SectionTitle";
+import SectionTitle from "../Components/SectionTitle";
 import { ArrowUpRight } from "lucide-react";
 import { motion } from "motion/react";
 import { featuresData } from "../Constants/features";
