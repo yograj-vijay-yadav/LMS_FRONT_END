@@ -1,4 +1,4 @@
-import SectionTitle from "../components/SectionTitle"
+import SectionTitle from "../Components/SectionTitle"
 import { CheckIcon } from "lucide-react";
 import { motion } from "motion/react";
 import {pricingData}  from "../Constants/pricingData.js";
