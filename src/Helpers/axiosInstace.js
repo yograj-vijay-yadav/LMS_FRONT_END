@@ -4,7 +4,7 @@ const BASE_URL = "https://lms-back-end-f0n5.onrender.com/api/v1/";
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
-  withCredentials: false,
+  withCredentials: true,
 });
 
 export default axiosInstance;
