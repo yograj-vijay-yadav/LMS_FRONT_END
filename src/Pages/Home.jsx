@@ -3,19 +3,20 @@ import Faqs from "../Components/Faqs";
 import HomeLayout from "../Layouts/HomeLayout";
 import FeaturesSection from "../Components/FeatureSection";
 import SimplePricing from "../Components/Pricing";
+import Navbar from "../Components/Navbar";
 
 function Home() {
     
        return (
         <div>
         <HomeLayout>
+            <Navbar />
             <HeroSection />
             <FeaturesSection />
             <SimplePricing />
             <Faqs />
         </HomeLayout>
         </div>
-       
     ) 
 }
 

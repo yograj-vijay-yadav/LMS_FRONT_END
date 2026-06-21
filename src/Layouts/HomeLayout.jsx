@@ -1,11 +1,9 @@
 import Footer from "../Components/Footer";
-import Navbar from "../Components/Navbar";
 
 
 function HomeLayout({ children }) {
   return (
     <div className="min-h-screen w-full bg-black">  
-      <Navbar />
       <main className="flex-grow">{children}</main>
       <Footer />
     </div>

@@ -42,7 +42,7 @@ function CourseDescription() {
           </div>
 
           {/* CTA */}
-          {role === "ADMIN" || data?.subscription?.status === "active" ? (
+         { role === "ADMIN" || data?.subscription?.status === "active" ? (
             <button
               onClick={() =>
                 navigate("/course/displaylectures", { state: { ...state } })
@@ -56,7 +56,7 @@ function CourseDescription() {
               onClick={() => navigate("/checkout")}
               className="w-full bg-pink-600 hover:bg-pink-700 transition rounded-lg py-3 text-lg font-semibold"
             >
-              Subscribe
+              Subscribe 
             </button>
           )}
         </div>
