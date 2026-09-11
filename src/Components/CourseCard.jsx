@@ -1,46 +1,57 @@
+import { GraduationCap, PlayCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 function CourseCard({ data }) {
   const navigate = useNavigate();
 
+  function openCourse() {
+    navigate("/course/description/", { state: { ...data } });
+  }
+
   return (
-    <div
-      onClick={() =>
-        navigate("/course/description/", { state: { ...data } })
-      }
-      className="text-white w-[22rem] h-[430px] shadow-lg rounded-xl cursor-pointer group overflow-hidden border border-pink-500 hover:shadow-pink-500/40 transition-transform duration-300 hover:scale-105"
+    <button
+      type="button"
+      onClick={openCourse}
+      aria-label={`View course: ${data?.title}`}
+      className="card card-interactive group w-full max-w-[22rem] overflow-hidden p-0 text-left focus-visible:-translate-y-1"
     >
       {/* Thumbnail */}
-      <div className="overflow-hidden ">
+      <div className="relative overflow-hidden">
         <img
-          className="h-58 w-100 object-cover rounded-t-xl transform group-hover:scale-110 transition-transform duration-500 ease-in-out"
+          className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105"
           src={data?.thumbnail?.secure_url}
-          alt="course thumbnail"
+          alt={`Thumbnail for ${data?.title}`}
+          loading="lazy"
         />
+        <span className="badge badge-slate absolute left-3 top-3 bg-slate-950/80 backdrop-blur-sm">
+          {data?.category}
+        </span>
+        <span className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+          <PlayCircle className="size-12 text-white/90" aria-hidden="true" />
+        </span>
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-2">
-        <h2 className="text-lg font-bold text-pink-400 line-clamp-2 group-hover:text-pink-300 transition-colors">
+      <div className="space-y-2.5 p-5">
+        <h3 className="line-clamp-2 text-base font-semibold text-white transition-colors group-hover:text-rose-400">
           {data?.title}
-        </h2>
-        <p className="text-sm text-gray-300 line-clamp-2">
+        </h3>
+        <p className="line-clamp-2 text-sm leading-relaxed text-slate-400">
           {data?.description}
         </p>
-        <p className="text-sm font-medium">
-          <span className="text-pink-400 font-semibold">Category: </span>
-          {data?.category}
-        </p>
-        <p className="text-sm font-medium">
-          <span className="text-pink-400 font-semibold">Total lectures: </span>
-          {data?.numberoflectures}
-        </p>
-        <p className="text-sm font-medium">
-          <span className="text-pink-400 font-semibold">Instructor: </span>
-          {data?.createdBy}
-        </p>
+
+        <div className="flex items-center justify-between border-t border-slate-800 pt-3 text-xs text-slate-400">
+          <span className="flex items-center gap-1.5">
+            <GraduationCap className="size-4 text-slate-500" aria-hidden="true" />
+            <span className="max-w-[9rem] truncate">{data?.createdBy}</span>
+          </span>
+          <span className="flex items-center gap-1.5 font-medium text-slate-300">
+            <PlayCircle className="size-4 text-slate-500" aria-hidden="true" />
+            {data?.numberOfLectures || data?.numberoflectures || 0} lectures
+          </span>
+        </div>
       </div>
-    </div>
+    </button>
   );
 }
 

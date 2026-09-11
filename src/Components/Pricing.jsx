@@ -1,54 +1,70 @@
-import SectionTitle from "../Components/SectionTitle"
-import { CheckIcon } from "lucide-react";
-import { motion } from "motion/react";
-import {pricingData}  from "../Constants/pricingData.js";
+import { Check } from "lucide-react";
+import { Link } from "react-router-dom";
+
+import { pricingData } from "../Constants/pricingData";
+import SectionTitle from "./SectionTitle";
 
 export default function Pricing() {
-    return (
-        <div id="pricing" className="px-4 md:px-16 lg:px-24 xl:px-32">
-            <SectionTitle 
-                text1="Pricing" 
-                text2="Our Pricing Plans" 
-                text3="Flexible pricing options designed to meet your needs — whether you're just getting started or scaling up." 
-            />
+  return (
+    <section id="pricing" className="py-20">
+      <div className="container-page">
+        <SectionTitle
+          text1="Pricing"
+          text2="One simple plan for everything"
+          text3="A single subscription unlocks the entire catalog. No per-course fees, no hidden charges."
+        />
 
-            <div className="flex flex-wrap items-center justify-center gap-8 mt-20">
-                {pricingData.map((plan, index) => (
-                    <motion.div 
-                        key={index} 
-                        className={`w-72 text-center border border-pink-950 p-6 pb-16 rounded-xl ${plan.mostPopular ? 'bg-pink-950 relative' : 'bg-pink-950/30'}`}
-                        initial={{ y: 150, opacity: 0 }}
-                        whileInView={{ y: 0, opacity: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.15, type: "spring", stiffness: 320, damping: 70, mass: 1 }}
-                    >
-                        {plan.mostPopular && (
-                            <p className="absolute px-3 text-sm -top-3.5 left-3.5 py-1 bg-pink-400 rounded-full">
-                                Most Popular
-                            </p>
-                        )}
-                        <p className="font-semibold">{plan.name}</p>
-                        <h1 className="text-3xl font-semibold">
-                            ${plan.price}
-                            <span className="text-gray-500 font-normal text-sm">/{plan.period}</span>
-                        </h1>
-                        <ul className="list-none text-slate-300 mt-6 space-y-2">
-                            {plan.features.map((feature, idx) => (
-                                <li key={idx} className="flex items-center gap-2">
-                                    <CheckIcon className="size-4.5 text-pink-600" />
-                                    <p>{feature}</p>
-                                </li>
-                            ))}
-                        </ul>
-                        <button 
-                            type="button" 
-                            className={`w-full py-2.5 rounded-md font-medium mt-7 transition-all ${plan.mostPopular ? 'bg-white text-pink-600 hover:bg-slate-200' : 'bg-pink-500 hover:bg-pink-600'}`}
-                        >
-                            Get Started
-                        </button>
-                    </motion.div>
+        <div className="mt-14 flex justify-center">
+          {pricingData.map((plan, index) => (
+            <div
+              key={plan.name}
+              className={`card card-interactive anim-fade-up relative flex w-full max-w-xl flex-col p-7 ${
+                plan.mostPopular
+                  ? "border-rose-500/50 bg-rose-950/20 shadow-lg shadow-rose-950/30"
+                  : ""
+              }`}
+              style={{ animationDelay: `${index * 80}ms` }}
+            >
+              {plan.mostPopular && (
+                <span className="badge badge-rose absolute -top-3 left-6 font-semibold">
+                  Most popular
+                </span>
+              )}
+
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-300">
+                {plan.name}
+              </h3>
+              <p className="mt-3">                <span className="font-display text-4xl font-bold text-white">₹{plan.price}</span>
+                <span className="text-sm text-slate-500">/{plan.period}</span>
+              </p>
+
+              <ul className="mt-6 flex-1 space-y-3">
+                {plan.features.map((feature) => (
+                  <li
+                    key={feature}
+                    className="flex items-start gap-2.5 text-sm text-slate-300"
+                  >
+                    <Check
+                      className="mt-0.5 size-4 shrink-0 text-rose-500"
+                      aria-hidden="true"
+                    />
+                    {feature}
+                  </li>
                 ))}
+              </ul>
+
+              <Link
+                to="/checkout"
+                className={`btn mt-8 w-full ${
+                  plan.mostPopular ? "btn-primary" : "btn-secondary"
+                }`}
+              >
+                Get started
+              </Link>
             </div>
+          ))}
         </div>
-    );
+      </div>
+    </section>
+  );
 }

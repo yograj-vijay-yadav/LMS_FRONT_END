@@ -6,20 +6,29 @@ import {
   Legend,
   LinearScale,
   Title,
-  Tooltip
+  Tooltip,
 } from "chart.js";
-
-import { useEffect } from "react";
+import {
+  BookOpen,
+  IndianRupee,
+  PlayCircle,
+  Plus,
+  Trash2,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { Bar, Pie } from "react-chartjs-2";
-import { BsCollectionPlayFill, BsTrash } from "react-icons/bs";
-import { FaUsers } from "react-icons/fa";
-import { FcSalesPerformance } from "react-icons/fc";
-import { GiMoneyStack } from "react-icons/gi";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
+import ConfirmDialog from "../../Components/Ui/ConfirmDialog";
+import EmptyState from "../../Components/Ui/EmptyState";
 import HomeLayout from "../../Layouts/HomeLayout";
-import { deleteCourse, getAllCourses } from "../../Redux/Slices/CourseSlice";
+import {
+  deleteCourse,
+  getAllCourses,
+} from "../../Redux/Slices/CourseSlice";
 import { getPaymentRecord } from "../../Redux/Slices/RazorpaySlice";
 import { getStatsData } from "../../Redux/Slices/StatSlice";
 
@@ -33,20 +42,46 @@ ChartJS.register(
   Tooltip
 );
 
-function AdminDashboard() {
+function StatCard({ icon: Icon, label, value, tone = "rose" }) {
+  const tones = {
+    rose: "bg-rose-500/10 text-rose-400",
+    emerald: "bg-emerald-500/10 text-emerald-400",
+    sky: "bg-sky-500/10 text-sky-400",
+    violet: "bg-violet-500/10 text-violet-400",
+  };
 
+  return (
+    <div className="card card-interactive flex items-center gap-4 p-5">
+      <div
+        className={`flex size-11 shrink-0 items-center justify-center rounded-lg ${tones[tone]}`}
+      >
+        <Icon className="size-5" aria-hidden="true" />
+      </div>
+      <div className="min-w-0">
+        <p className="text-xs font-medium text-slate-400">{label}</p>
+        <p className="truncate font-display text-2xl font-bold text-white">
+          {value}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function AdminDashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { allUsersCount = 0, subscribedCount = 0 } = useSelector(
     (state) => state.stat
   );
-
   const { allPayments = {}, monthlySalesRecord = [] } = useSelector(
     (state) => state.razorpay
   );
-
   const myCourses = useSelector((state) => state?.course?.courseData || []);
+
+  const [courseToDelete, setCourseToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const totalRevenue = (allPayments?.count || 0) * 499;
 
@@ -54,241 +89,300 @@ function AdminDashboard() {
     labels: ["Registered Users", "Enrolled Users"],
     datasets: [
       {
-        label: "User Details",
+        label: "Users",
         data: [allUsersCount, subscribedCount],
-        backgroundColor: ["#ec4899", "#f472b6"],
-        borderWidth: 1
-      }
-    ]
+        backgroundColor: ["#f43f5e", "#fb7185"],
+        borderColor: "#0f172a",
+        borderWidth: 2,
+      },
+    ],
   };
 
   const salesData = {
     labels: [
-      "Jan","Feb","Mar","Apr","May","Jun",
-      "Jul","Aug","Sep","Oct","Nov","Dec"
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
     ],
     datasets: [
       {
         label: "Sales / Month",
         data: monthlySalesRecord,
-        backgroundColor: "#ec4899",
-        borderColor: "#ffffff",
-        borderWidth: 2
-      }
-    ]
+        backgroundColor: "rgba(244, 63, 94, 0.7)",
+        hoverBackgroundColor: "#f43f5e",
+        borderRadius: 6,
+        maxBarThickness: 32,
+      },
+    ],
   };
 
-  async function onCourseDelete(id) {
-    if (window.confirm("Are you sure you want to delete this course?")) {
-      const res = await dispatch(deleteCourse(id));
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: { color: "#94a3b8", font: { size: 11 } },
+        position: "bottom",
+      },
+    },
+    scales: {
+      x: {
+        ticks: { color: "#64748b", font: { size: 10 } },
+        grid: { display: false },
+      },
+      y: {
+        ticks: { color: "#64748b", font: { size: 10 } },
+        grid: { color: "rgba(51, 65, 85, 0.4)" },
+        beginAtZero: true,
+      },
+    },
+  };
 
-      if (res?.payload?.success) {
-        dispatch(getAllCourses());
-      }
+  async function confirmDeleteCourse() {
+    if (!courseToDelete) return;
+    setIsDeleting(true);
+    const res = await dispatch(deleteCourse(courseToDelete._id));
+    if (res?.payload?.success) {
+      dispatch(getAllCourses());
     }
+    setIsDeleting(false);
+    setCourseToDelete(null);
   }
 
   useEffect(() => {
-    dispatch(getAllCourses());
-    dispatch(getStatsData());
-    dispatch(getPaymentRecord());
+    async function load() {
+      await Promise.allSettled([
+        dispatch(getAllCourses()),
+        dispatch(getStatsData()),
+        dispatch(getPaymentRecord()),
+      ]);
+      setIsLoading(false);
+    }
+    load();
   }, [dispatch]);
 
   return (
     <HomeLayout>
-
-      <div className="min-h-[90vh] pt-20 flex flex-col gap-10 text-gray-200 px-6 bg-gradient-to-b from-gray-900 to-black">
-
-        {/* TITLE */}
-
-        <h1 className="text-center text-5xl font-bold text-pink-500 border-b border-gray-700 pb-4">
-          Admin Dashboard
-        </h1>
-
-        {/* CHART SECTION */}
-
-        <div className="grid grid-cols-2 gap-6">
-
-          {/* USER CHART */}
-
-          <div className="flex flex-col items-center gap-10 p-6 bg-gray-900 border border-gray-700 shadow-xl rounded-xl">
-
-            <div className="w-80 h-80">
-              <Pie data={userData} />
-            </div>
-
-            <div className="grid grid-cols-2 gap-5 w-full">
-
-              <div className="flex items-center justify-between p-5 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 transition">
-
-                <div>
-                  <p className="text-gray-400">Registered Users</p>
-                  <h3 className="text-4xl font-bold text-pink-700">
-                    {allUsersCount}
-                  </h3>
-                </div>
-
-                <FaUsers className="text-pink-700 text-5xl" />
-
-              </div>
-
-              <div className="flex items-center justify-between p-5 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 transition">
-
-                <div>
-                  <p className="text-gray-400">Subscribed Users</p>
-                  <h3 className="text-4xl font-bold text-pink-300">
-                    {subscribedCount}
-                  </h3>
-                </div>
-
-                <FaUsers className="text-pink-300 text-5xl" />
-
-              </div>
-
-            </div>
-
+      <div className="container-page py-12">
+        {/* Header */}
+        <div className="anim-fade-up mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <span className="badge badge-rose mb-2 font-semibold uppercase tracking-wider">
+              Admin
+            </span>
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+              Dashboard
+            </h1>
+            <p className="mt-1 text-sm text-slate-400">
+              Platform performance at a glance.
+            </p>
           </div>
-
-          {/* SALES CHART */}
-
-          <div className="flex flex-col items-center gap-10 p-6 bg-gray-900 border border-gray-700 shadow-xl rounded-xl">
-
-            <div className="h-80 w-full">
-              <Bar data={salesData} />
-            </div>
-
-            <div className="grid grid-cols-2 gap-5 w-full">
-
-              <div className="flex items-center justify-between p-5 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 transition">
-
-                <div>
-                  <p className="text-gray-400">Subscription Count</p>
-                  <h3 className="text-4xl font-bold text-pink-500">
-                    {allPayments?.count || 0}
-                  </h3>
-                </div>
-
-                <FcSalesPerformance className="text-5xl" />
-
-              </div>
-
-              <div className="flex items-center justify-between p-5 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 transition">
-
-                <div>
-                  <p className="text-gray-400">Total Revenue</p>
-                  <h3 className="text-4xl font-bold text-pink-400">
-                    ₹{totalRevenue}
-                  </h3>
-                </div>
-
-                <GiMoneyStack className="text-pink-400 text-5xl" />
-
-              </div>
-
-            </div>
-
-          </div>
-
+          <button
+            type="button"
+            onClick={() => navigate("/course/create")}
+            className="btn btn-primary self-start sm:self-auto"
+          >
+            <Plus className="size-4" aria-hidden="true" />
+            Create new course
+          </button>
         </div>
 
-        {/* COURSE TABLE */}
+        {/* Stat cards */}
+        <div className="stagger mb-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <StatCard
+            icon={Users}
+            label="Registered users"
+            value={allUsersCount}
+            tone="rose"
+          />
+          <StatCard
+            icon={BookOpen}
+            label="Enrolled users"
+            value={subscribedCount}
+            tone="emerald"
+          />
+          <StatCard
+            icon={TrendingUp}
+            label="Subscriptions"
+            value={allPayments?.count || 0}
+            tone="sky"
+          />
+          <StatCard
+            icon={IndianRupee}
+            label="Total revenue"
+            value={`₹${totalRevenue.toLocaleString("en-IN")}`}
+            tone="violet"
+          />
+        </div>
 
-        <div className="mx-[10%] w-[80%] flex flex-col gap-10 mb-10">
-
-          <div className="flex items-center justify-between">
-
-            <h1 className="text-3xl font-semibold text-pink-500">
-              Courses Overview
-            </h1>
-
-            <button
-              onClick={() => navigate("/course/create")}
-              className="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2 rounded-lg font-semibold shadow-md transition"
-            >
-              Create New Course
-            </button>
-
+        {/* Charts */}
+        <div className="mb-12 grid gap-6 lg:grid-cols-2">
+          <div className="card anim-fade-up p-6">
+            <h2 className="mb-4 text-base font-semibold">Users overview</h2>
+            <div className="relative h-72">
+              <Pie data={userData} options={chartOptions} />
+            </div>
           </div>
+          <div className="card anim-fade-up p-6" style={{ animationDelay: "80ms" }}>
+            <h2 className="mb-4 text-base font-semibold">Sales by month</h2>
+            <div className="relative h-72">
+              <Bar data={salesData} options={chartOptions} />
+            </div>
+          </div>
+        </div>
 
-          <table className="w-full border border-gray-700 rounded-lg overflow-hidden">
+        {/* Courses table */}
+        <section aria-label="Courses overview">
+          <h2 className="anim-fade-up mb-5 text-lg font-semibold">
+            Courses overview
+          </h2>
 
-            <thead className="bg-gray-800 text-pink-400 text-lg">
+          {isLoading ? (
+            <div className="card space-y-3 p-6">
+              {[...Array(4)].map((_, index) => (
+                <div key={index} className="skeleton h-10 w-full" />
+              ))}
+            </div>
+          ) : myCourses.length === 0 ? (
+            <EmptyState
+              icon={BookOpen}
+              title="No courses yet"
+              description="Create your first course to start building the catalog."
+              actionLabel="Create course"
+              onAction={() => navigate("/course/create")}
+            />
+          ) : (
+            <>
+              {/* Desktop table */}
+              <div className="card anim-fade-up hidden overflow-hidden md:block">
+                <table className="w-full text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-slate-800 bg-slate-900/80 text-xs uppercase tracking-wider text-slate-400">
+                      <th scope="col" className="px-5 py-3.5 font-semibold">#</th>
+                      <th scope="col" className="px-5 py-3.5 font-semibold">Title</th>
+                      <th scope="col" className="px-5 py-3.5 font-semibold">Category</th>
+                      <th scope="col" className="px-5 py-3.5 font-semibold">Instructor</th>
+                      <th scope="col" className="px-5 py-3.5 font-semibold">Lectures</th>
+                      <th scope="col" className="px-5 py-3.5 font-semibold">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {myCourses.map((course, index) => (
+                      <tr
+                        key={course._id}
+                        className="border-b border-slate-800/60 transition-colors last:border-0 hover:bg-slate-800/40"
+                      >
+                        <td className="px-5 py-4 text-slate-500">{index + 1}</td>
+                        <td className="max-w-[14rem] px-5 py-4">
+                          <span className="block truncate font-medium text-white">
+                            {course?.title}
+                          </span>
+                          <span className="block truncate text-xs text-slate-500">
+                            {course?.description}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4">
+                          <span className="badge badge-slate">{course?.category}</span>
+                        </td>
+                        <td className="max-w-[10rem] truncate px-5 py-4 text-slate-300">
+                          {course?.createdBy}
+                        </td>
+                        <td className="px-5 py-4 text-slate-300">
+                          {course?.numberOfLectures}
+                        </td>
+                        <td className="px-5 py-4">
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              className="btn btn-secondary btn-sm"
+                              onClick={() =>
+                                navigate("/course/displaylectures", {
+                                  state: { ...course },
+                                })
+                              }
+                              aria-label={`Manage lectures for ${course?.title}`}
+                            >
+                              <PlayCircle className="size-4" aria-hidden="true" />
+                              Lectures
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-danger btn-sm"
+                              onClick={() => setCourseToDelete(course)}
+                              aria-label={`Delete ${course?.title}`}
+                            >
+                              <Trash2 className="size-4" aria-hidden="true" />
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
-              <tr>
-                <th className="p-3">S No</th>
-                <th className="p-3">Course Title</th>
-                <th className="p-3">Category</th>
-                <th className="p-3">Instructor</th>
-                <th className="p-3">Lectures</th>
-                <th className="p-3">Description</th>
-                <th className="p-3">Actions</th>
-              </tr>
-
-            </thead>
-
-            <tbody>
-
-              {myCourses.length > 0 ? (
-                myCourses.map((course, idx) => (
-
-                  <tr
-                    key={course._id}
-                    className="border-b border-gray-700 hover:bg-gray-800 transition"
-                  >
-
-                    <td className="p-3">{idx + 1}</td>
-                    <td className="p-3">{course?.title}</td>
-                    <td className="p-3">{course?.category}</td>
-                    <td className="p-3">{course?.createdBy}</td>
-                    <td className="p-3">{course?.numberOfLectures}</td>
-
-                    <td className="p-3 max-w-xs text-gray-300 truncate">
+              {/* Mobile cards */}
+              <div className="stagger space-y-4 md:hidden">
+                {myCourses.map((course) => (
+                  <div key={course._id} className="card p-5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <h3 className="truncate font-semibold text-white">
+                          {course?.title}
+                        </h3>
+                        <p className="mt-0.5 text-xs text-slate-500">
+                          {course?.category} · {course?.createdBy} ·{" "}
+                          {course?.numberOfLectures} lectures
+                        </p>
+                      </div>
+                      <span className="badge badge-slate shrink-0">
+                        #{course?.category}
+                      </span>
+                    </div>
+                    <p className="mt-2 line-clamp-2 text-sm text-slate-400">
                       {course?.description}
-                    </td>
-
-                    <td className="p-3 flex gap-3">
-
+                    </p>
+                    <div className="mt-4 flex gap-2">
                       <button
-                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md shadow"
+                        type="button"
+                        className="btn btn-secondary btn-sm flex-1"
                         onClick={() =>
                           navigate("/course/displaylectures", {
-                            state: { ...course }
+                            state: { ...course },
                           })
                         }
                       >
-                        <BsCollectionPlayFill />
+                        <PlayCircle className="size-4" aria-hidden="true" />
+                        Lectures
                       </button>
-
                       <button
-                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md shadow"
-                        onClick={() => onCourseDelete(course?._id)}
+                        type="button"
+                        className="btn btn-danger btn-sm"
+                        onClick={() => setCourseToDelete(course)}
+                        aria-label={`Delete ${course?.title}`}
                       >
-                        <BsTrash />
+                        <Trash2 className="size-4" aria-hidden="true" />
                       </button>
-
-                    </td>
-
-                  </tr>
-
-                ))
-              ) : (
-
-                <tr>
-                  <td colSpan="7" className="text-center p-6 text-gray-400">
-                    No Courses Found
-                  </td>
-                </tr>
-
-              )}
-
-            </tbody>
-
-          </table>
-
-        </div>
-
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </section>
       </div>
 
+      {/* Delete confirmation */}
+      <ConfirmDialog
+        open={Boolean(courseToDelete)}
+        destructive
+        title="Delete this course?"
+        message={`"${courseToDelete?.title}" and its lectures will be permanently removed. This action cannot be undone.`}
+        confirmLabel="Delete course"
+        busy={isDeleting}
+        onConfirm={confirmDeleteCourse}
+        onCancel={() => setCourseToDelete(null)}
+      />
     </HomeLayout>
   );
 }

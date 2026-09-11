@@ -1,188 +1,227 @@
+import { ChevronLeft, ImageUp } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import HomeLayout from "../../Layouts/HomeLayout";
 import { createNewCourse } from "../../Redux/Slices/CourseSlice";
 
 function CreateCourse() {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-    const [userInput, setUserInput] = useState({
-        title: "",
-        category: "",
-        createdBy: "",
-        description: "",
-        thumbnail: null,
-        previewImage: ""
+  const [userInput, setUserInput] = useState({
+    title: "",
+    category: "",
+    createdBy: "",
+    description: "",
+    thumbnail: null,
+    previewImage: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  function handleImageUpload(event) {
+    const uploadedImage = event.target.files?.[0];
+    if (!uploadedImage) return;
+
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(uploadedImage);
+    fileReader.addEventListener("load", function () {
+      setUserInput((prev) => ({
+        ...prev,
+        previewImage: this.result,
+        thumbnail: uploadedImage,
+      }));
     });
+  }
 
-    function handleImageUpload(e) {
-        e.preventDefault();
-        const uploadedImage = e.target.files[0];
-        if(uploadedImage) {
-            const fileReader = new FileReader();
-            fileReader.readAsDataURL(uploadedImage);
-            fileReader.addEventListener("load", function () {
-                setUserInput({
-                    ...userInput,
-                    previewImage: this.result,
-                    thumbnail: uploadedImage
-                })
-            })
-        }
+  function handleUserInput(event) {
+    const { name, value } = event.target;
+    setUserInput((prev) => ({ ...prev, [name]: value }));
+  }
+
+  async function onFormSubmit(event) {
+    event.preventDefault();
+
+    if (
+      !userInput.title.trim() ||
+      !userInput.description.trim() ||
+      !userInput.category.trim() ||
+      !userInput.thumbnail ||
+      !userInput.createdBy.trim()
+    ) {
+      toast.error("All fields are mandatory");
+      return;
     }
 
-    function handleUserInput(e) {
-        const {name, value} = e.target;
-        setUserInput({
-            ...userInput,
-            [name]: value
-        })
+    setIsSubmitting(true);
+    const response = await dispatch(createNewCourse(userInput));
+    setIsSubmitting(false);
+
+    if (response?.payload?.success) {
+      navigate("/courses");
     }
+  }
 
-    async function onFormSubmit(e) {
-        e.preventDefault();
+  return (
+    <HomeLayout>
+      <div className="container-page flex min-h-[80vh] items-center justify-center py-14">
+        <div className="anim-fade-up w-full max-w-2xl">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-slate-400 transition-colors hover:text-white"
+          >
+            <ChevronLeft className="size-4" aria-hidden="true" />
+            Back
+          </button>
 
-        if(!userInput.title || !userInput.description || !userInput.category || !userInput.thumbnail || !userInput.createdBy) {
-            toast.error("All fields are mandatory");
-            return;
-        }
-
-        const response = await dispatch(createNewCourse(userInput));
-        if(response?.payload?.success) {
-            setUserInput({
-                title: "",
-                category: "",
-                createdBy: "",
-                description: "",
-                thumbnail: null,
-                previewImage: ""
-            });
-            navigate("/courses");
-        }
-    }
-
-    return (
-        <HomeLayout>
-            <div className="flex items-center justify-center h-[100vh]">
-                <form
-                    onSubmit={onFormSubmit}
-                    className="flex flex-col justify-center gap-5 rounded-lg p-4 text-white w-[700px] my-10 shadow-[0_0_10px_black] relative"
-                >
-                    
-                    <Link className="absolute top-8 text-2xl link text-accent cursor-pointer">
-                        <AiOutlineArrowLeft />
-                    </Link>
-
-                    <h1 className="text-center text-2xl font-bold">
-                        Create New Course
-                    </h1>
-
-                    <main className="grid grid-cols-2 gap-x-10">
-                        <div className="gap-y-6">
-                            <div>
-                                <label htmlFor="image_uploads" className="cursor-pointer">
-                                    {userInput.previewImage ? (
-                                        <img 
-                                            className="w-full h-44 m-auto border"
-                                            src={userInput.previewImage}
-                                        />
-                                    ) : (
-                                        <div className="w-full h-44 m-auto flex items-center justify-center border">
-                                            <h1 className="font-bold text-lg">Upload your course thumbnail</h1>
-                                        </div>
-                                    )}
-
-                                </label>
-                                <input 
-                                    className="hidden"
-                                    type="file"
-                                    id="image_uploads"
-                                    accept=".jpg, .jpeg, .png"
-                                    name="image_uploads"
-                                    onChange={handleImageUpload}
-                                />
-                            </div>
-                            <div className="flex flex-col gap-1">
-                                <label className="text-lg font-semibold" htmlFor="title">
-                                    Course title
-                                </label>
-                                <input
-                                    required
-                                    type="text"
-                                    name="title"
-                                    id="title"
-                                    placeholder="Enter course title"
-                                    className="bg-transparent px-2 py-1 border"
-                                    value={userInput.title}
-                                    onChange={handleUserInput}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col gap-1">
-                            <div className="flex flex-col gap-1">
-                                <label className="text-lg font-semibold" htmlFor="createdBy">
-                                    Course Instructor
-                                </label>
-                                <input
-                                    required
-                                    type="text"
-                                    name="createdBy"
-                                    id="createdBy"
-                                    placeholder="Enter course instructor"
-                                    className="bg-transparent px-2 py-1 border"
-                                    value={userInput.createdBy}
-                                    onChange={handleUserInput}
-                                />
-                            </div>
-
-                            <div className="flex flex-col gap-1">
-                                <label className="text-lg font-semibold" htmlFor="category">
-                                    Course category
-                                </label>
-                                <input
-                                    required
-                                    type="text"
-                                    name="category"
-                                    id="category"
-                                    placeholder="Enter course category"
-                                    className="bg-transparent px-2 py-1 border"
-                                    value={userInput.category}
-                                    onChange={handleUserInput}
-                                />
-                            </div>
-                            <div className="flex flex-col gap-1">
-                                <label className="text-lg font-semibold" htmlFor="description">
-                                    Course description
-                                </label>
-                                <textarea
-                                    required
-                                    type="text"
-                                    name="description"
-                                    id="description"
-                                    placeholder="Enter course description"
-                                    className="bg-transparent px-2 py-1 h-24 overflow-y-scroll resize-none border"
-                                    value={userInput.description}
-                                    onChange={handleUserInput}
-                                />
-                            </div>
-                        </div>
-                    </main>
-
-                    <button type="submit" className="w-full py-2 rounded-sm font-semibold text-lg cursor-pointer bg-pink-600 hover:bg-pink-500 transition-all ease-in-out duration-300">
-                        Create Course
-                    </button>
-
-
-                </form>
+          <div className="card p-6 sm:p-8">
+            <div className="mb-6">
+              <span className="badge badge-rose mb-2 font-semibold uppercase tracking-wider">
+                Admin
+              </span>
+              <h1 className="text-2xl font-bold">Create a new course</h1>
+              <p className="mt-1 text-sm text-slate-400">
+                Publish a course with a thumbnail, category, and description.
+              </p>
             </div>
-        </HomeLayout>
-    )
+
+            <form onSubmit={onFormSubmit} className="space-y-5">
+              <div className="grid gap-5 sm:grid-cols-2">
+                {/* Thumbnail upload */}
+                <div className="sm:order-1">
+                  <label
+                    htmlFor="image_uploads"
+                    className={`flex h-44 w-full cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden rounded-lg border border-dashed px-4 text-center transition-colors duration-200 hover:border-rose-500/50 ${
+                      userInput.previewImage
+                        ? "border-solid border-slate-700"
+                        : "border-slate-700 bg-slate-900/60"
+                    }`}
+                  >
+                    {userInput.previewImage ? (
+                      <img
+                        className="size-full object-cover"
+                        src={userInput.previewImage}
+                        alt="Course thumbnail preview"
+                      />
+                    ) : (
+                      <>
+                        <ImageUp
+                          className="size-8 text-slate-500"
+                          aria-hidden="true"
+                        />
+                        <span className="text-sm font-medium text-slate-300">
+                          Upload course thumbnail
+                        </span>
+                        <span className="text-xs text-slate-500">
+                          JPG, JPEG or PNG
+                        </span>
+                      </>
+                    )}
+                  </label>
+                  <input
+                    className="sr-only"
+                    type="file"
+                    id="image_uploads"
+                    accept=".jpg, .jpeg, .png"
+                    name="image_uploads"
+                    onChange={handleImageUpload}
+                    aria-label="Select course thumbnail"
+                  />
+                </div>
+
+                {/* Title */}
+                <div className="space-y-5 sm:order-2">
+                  <div>
+                    <label htmlFor="title" className="label">
+                      Course title
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      name="title"
+                      id="title"
+                      placeholder="Enter course title"
+                      className="input"
+                      value={userInput.title}
+                      onChange={handleUserInput}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="createdBy" className="label">
+                      Course instructor
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      name="createdBy"
+                      id="createdBy"
+                      placeholder="Enter instructor name"
+                      className="input"
+                      value={userInput.createdBy}
+                      onChange={handleUserInput}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="category" className="label">
+                      Course category
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      name="category"
+                      id="category"
+                      placeholder="e.g. Web Development"
+                      className="input"
+                      value={userInput.category}
+                      onChange={handleUserInput}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="description" className="label">
+                  Course description
+                </label>
+                <textarea
+                  required
+                  name="description"
+                  id="description"
+                  rows={5}
+                  placeholder="What will learners get from this course?"
+                  className="input resize-none"
+                  value={userInput.description}
+                  onChange={handleUserInput}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="btn btn-primary w-full py-3 text-base"
+                aria-busy={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <span
+                      className="inline-block size-4 animate-spin rounded-full border-2 border-white/30 border-t-white"
+                      aria-hidden="true"
+                    />
+                    Creating course...
+                  </>
+                ) : (
+                  "Create course"
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </HomeLayout>
+  );
 }
 
 export default CreateCourse;
