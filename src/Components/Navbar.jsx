@@ -1,18 +1,19 @@
-import { motion } from "motion/react";
-import { navlinks } from "../Constants/navlink";
-import { NavLink, Link, useNavigate } from "react-router-dom";
+import {
+  ChevronDown,
+  LayoutDashboard,
+  LogIn,
+  LogOut,
+  Menu,
+  UserCircle2,
+  X,
+} from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../Redux/Slices/AuthSlice";
-import { UserCircle } from "lucide-react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
-      //  <li><Link to="/">Home</Link></li>
-      //       <li><Link to="/admin/dashboard">Admin Dashboard</Link></li>
-      //       <li> {isLoggedIn && role === "ADMIN" && (
-      //         <Link to="/course/create"> Create new course</Link>
-      //       )}</li>
-      //       <li><Link to="/courses">All Courses</Link></li>
-      //       <li><Link to="/contact">Contact Us</Link></li>
-      //       <li><Link to="/about">About Us</Link></li>
+import { navlinks } from "../Constants/navlink";
+import { logout } from "../Redux/Slices/AuthSlice";
 
 export default function Navbar() {
   const dispatch = useDispatch();
@@ -21,230 +22,232 @@ export default function Navbar() {
   const isLoggedIn = useSelector((state) => state?.auth?.isLoggedIn);
   const role = useSelector((state) => state?.auth?.role);
 
-  async function handleLogout(e) {
-    e.preventDefault();
-    const result = await dispatch(logout());
-    if (result?.payload?.success) navigate("/");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  // Close menus on route change
+  useEffect(() => {
+    setMenuOpen(false);
+    setUserMenuOpen(false);
+  }, [navigate]);
+
+  // Lock body scroll while the mobile drawer is open
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
+  async function handleLogout() {
+    setUserMenuOpen(false);
+    setMenuOpen(false);
+    await dispatch(logout());
+    navigate("/");
   }
 
+  const linkClasses = ({ isActive }) =>
+    `rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+      isActive ? "text-white" : "text-slate-400 hover:text-white"
+    }`;
+
   return (
-    <motion.nav
-      className="fixed inset-x-0 top-0 z-50 py-4"
-      initial={{ y: -100, opacity: 0 }}
+    <motion.header
+      className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-slate-950/85 backdrop-blur-md"
+      initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 250, damping: 70 }}
+      transition={{ type: "spring", stiffness: 250, damping: 30 }}
     >
-      {/* Full-width blur background */}
-      <div className="absolute inset-0 fixed backdrop-blur-lg bg-black/30 h-16 mt-2 border-b border-white/5" />
-
-      {/* Content container */}
-      <div className="relative mx-auto max-w-7xl px-6">
-        <div className="flex items-center justify-between h-12">
-
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
+      <nav
+        className="container-page flex h-16 items-center justify-between gap-4"
+        aria-label="Main navigation"
+      >
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2.5" aria-label="SimpliLearn home">
+          <span className="flex size-9 items-center justify-center rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 shadow-sm shadow-rose-950/50">
             <img
               src="/favicon.ico"
-              alt="logo"
-              className="h-8 w-auto"
+              alt=""
+              className="size-5 object-contain"
+              aria-hidden="true"
             />
-            <span className="text-xl font-bold">SimpliLearn</span>
-          </Link>
+            </span>
+          <span className="font-display text-lg font-bold text-white">
+            Simpli<span className="text-gradient">Learn</span>
+          </span>
+        </Link>
 
-          {/* Navigation */}
-          <div className="flex items-center gap-10">
-            {navlinks.map((link) => (
-              <NavLink
-                key={link.name}
-                to={link.href}
-                className="hover:text-pink-500 transition"
-              >
-                {link.name}
-              </NavLink>
-            ))}
-          </div>
-
-          {/* Auth / CTA */}
-          <div className="flex items-center gap-4">
-            {!isLoggedIn ? (
-              <>
-                <Link to="/login" className="hover:text-pink-500">
-                  Login
-                </Link>
-                <Link
-                  to="/signup"
-                  className="px-6 py-2.5 bg-pink-600 hover:bg-pink-700 rounded-full"
-                >
-                  Signup
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link to="/user/profile" className="hover:text-pink-500">
-         <UserCircle size={32} />
-
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="px-4 py-2 bg-pink-600 hover:bg-pink-700 rounded-full"
-                >
-                  Logout
-                </button>
-              </>
-            )}
-          </div>
-
+        {/* Desktop links */}
+        <div className="hidden items-center gap-1 lg:flex">
+          {navlinks.map((link) => (
+            <NavLink key={link.name} to={link.href} end className={linkClasses}>
+              {link.name}
+            </NavLink>
+          ))}
         </div>
-      </div>
-    </motion.nav>
+
+        {/* Auth area */}
+        <div className="flex items-center gap-2">
+          {!isLoggedIn ? (
+            <div className="hidden items-center gap-2 lg:flex">
+              <Link to="/login" className="btn btn-ghost">
+                Log in
+              </Link>
+              <Link to="/signup" className="btn btn-primary">
+                Sign up free
+              </Link>
+            </div>
+          ) : (
+            <div className="relative hidden lg:block">
+              <button
+                type="button"
+                className="flex items-center gap-2 rounded-lg py-1.5 pl-1.5 pr-2 transition-colors hover:bg-slate-800"
+                onClick={() => setUserMenuOpen((open) => !open)}
+                aria-expanded={userMenuOpen}
+                aria-haspopup="menu"
+              >
+                <UserCircle2 className="size-8 text-slate-300" aria-hidden="true" />
+                <span className="max-w-[8rem] truncate text-sm font-medium text-slate-200">
+                  {role === "ADMIN" ? "Admin" : "My account"}
+                </span>
+                <ChevronDown
+                  className={`size-4 text-slate-400 transition-transform duration-200 ${
+                    userMenuOpen ? "rotate-180" : ""
+                  }`}
+                  aria-hidden="true"
+                />
+              </button>
+
+              <AnimatePresence>
+                {userMenuOpen && (
+                  <motion.div
+                    className="anim-scale-in absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-xl border border-slate-700 bg-slate-900 py-1.5 shadow-2xl"
+                    initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                    transition={{ duration: 0.18 }}
+                    role="menu"
+                  >
+                    {role === "ADMIN" ? (
+                      <Link
+                        to="/admin/dashboard"
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-200 transition-colors hover:bg-slate-800"
+                        role="menuitem"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        <LayoutDashboard className="size-4 text-slate-400" aria-hidden="true" />
+                        Admin dashboard
+                      </Link>
+                    ) : (
+                      <Link
+                        to="/user/profile"
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-200 transition-colors hover:bg-slate-800"
+                        role="menuitem"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        <UserCircle2 className="size-4 text-slate-400" aria-hidden="true" />
+                        My profile
+                      </Link>
+                    )}
+                    <button
+                      type="button"
+                      className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm text-red-400 transition-colors hover:bg-slate-800"
+                      role="menuitem"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="size-4" aria-hidden="true" />
+                      Log out
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
+
+          {/* Mobile menu toggle */}
+          <button
+            type="button"
+            className="flex size-10 items-center justify-center rounded-lg text-slate-300 transition-colors hover:bg-slate-800 lg:hidden"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+          >
+            {menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile drawer */}
+      <AnimatePresence>
+        {menuOpen && (
+          <>
+            <motion.div
+              className="fixed inset-0 top-16 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setMenuOpen(false)}
+              aria-hidden="true"
+            />
+            <motion.div
+              id="mobile-menu"
+              className="anim-slide-in-right fixed right-0 top-16 z-50 flex h-[calc(100dvh-4rem)] w-72 flex-col border-l border-slate-800 bg-slate-950 p-6 lg:hidden"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", stiffness: 300, damping: 32 }}
+            >
+              <div className="flex flex-col gap-1">
+                {navlinks.map((link) => (
+                  <NavLink
+                    key={link.name}
+                    to={link.href}
+                    className={({ isActive }) =>
+                      `rounded-lg px-4 py-3 text-base font-medium transition-colors ${
+                        isActive
+                          ? "bg-slate-800 text-white"
+                          : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
+                      }`
+                    }
+                  >
+                    {link.name}
+                  </NavLink>
+                ))}
+              </div>
+
+              <div className="mt-auto flex flex-col gap-3 border-t border-slate-800 pt-6">
+                {!isLoggedIn ? (
+                  <>
+                    <Link to="/login" className="btn btn-secondary w-full">
+                      <LogIn className="size-4" aria-hidden="true" />
+                      Log in
+                    </Link>
+                    <Link to="/signup" className="btn btn-primary w-full">
+                      Sign up free
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to={role === "ADMIN" ? "/admin/dashboard" : "/user/profile"}
+                      className="btn btn-secondary w-full"
+                    >
+                      <LayoutDashboard className="size-4" aria-hidden="true" />
+                      {role === "ADMIN" ? "Admin dashboard" : "My profile"}
+                    </Link>
+                    <button type="button" className="btn btn-danger w-full" onClick={handleLogout}>
+                      <LogOut className="size-4" aria-hidden="true" />
+                      Log out
+                    </button>
+                  </>
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </motion.header>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import { MenuIcon, XIcon } from "lucide-react";
-// import { useState } from "react";
-// import { motion } from "motion/react";
-// import { navlinks } from "../Constants/navlink";
-// import { NavLink, useNavigate } from "react-router-dom";
-// import { useDispatch } from "react-redux";
-
-// export default function Navbar() {
-//   const [isOpen, setIsOpen] = useState(false);
-
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-
-//   const isLoggedIn = useSelector((state) => state?.auth?.isLoggedIn);
-//   const role = useSelector((state) => state?.auth?.role);
-
-//   async function handleLogout(e) {
-//     e.preventDefault();
-//     const result = await dispatch(logout());
-//     if (result?.payload?.success) navigate("/");
-//   }
-   
-
-//   return (
-//     <>
-//       <motion.nav
-//         className="fixed w-full py-4"
-//         initial={{ y: -100, opacity: 0 }}
-//         animate={{ y: 0, opacity: 1 }}
-//         transition={{ type: "spring", stiffness: 250, damping: 70 }}
-//       >
-// <div className="relative mx-auto max-w-6xl pl-3 pr-6 md:pl-4 md:pr-10 lg:pl-6 lg:pr-14 flex items-center justify-between">
-
-//           {/* 🔹 BLUR LAYER */}
-//          <div className="absolute inset-0 rounded-full backdrop-blur-lg bg-white/5" />
-
-
-//           {/* CONTENT */}
-//           <div className="relative  z-10 flex items-center justify-between w-full ">
-
-//             {/* Logo + Brand grouped */}
-//               <a
-//     href="/"
-//     className="flex items-center gap-2 -ml-6 md:-ml-10 lg:-ml-14"
-//   >
-//               <img
-//                 src="public/favicon.ico"
-//                 alt="logo"
-//                 className="h-8 w-auto"
-//               />
-//               <span className="text-xl font-bold">SimpliLearn</span>
-//             </a>
-
-//             {/* Desktop Menu */}
-//             <div className="hidden md:flex items-center gap-8">
-//               {navlinks.map((link) => (
-//                 <NavLink
-//                   key={link.name}
-//                   to={link.href}
-//                   className="hover:text-pink-500 transition"
-//                 >
-//                   {link.name}
-//                 </NavLink>
-//               ))}
-//             </div>
-
-//             {/* CTA */}
-//             <ul>
-  
-//               <li className="absolute bottom-4 w-full">
-//               <div className="flex items-center justify-center gap-4 mr-6">
-//                 {!isLoggedIn ? (
-//                   <>
-//                     <Link to="/login" className="btn btn-primary flex-1">
-//                       Login
-//                     </Link>
-//                     <Link
-//                       to="/signup"
-//                       className="btn btn-secondary flex-1  hidden md:block px-6 py-2.5 bg-pink-600 hover:bg-pink-700 rounded-full"
-//                     >
-//                       Signup
-//                     </Link>
-//                   </>
-//                 ) : (
-//                   <>
-//                     <Link to="/user/profile" className="btn btn-primary flex-1">
-//                       Profile
-//                     </Link>
-//                     <button
-//                       onClick={handleLogout}
-//                       className="btn btn-secondary flex-1"
-//                     >
-//                       Logout
-//                     </button>
-//                   </>
-//                 )}
-//               </div>
-//             </li>
-//      </ul>
-
-//             {/* Mobile Menu Button */}
-//             <button onClick={() => setIsOpen(true)} className="md:hidden">
-//               <MenuIcon size={26} />
-//             </button>
-//           </div>
-//         </div>
-//       </motion.nav>
-
-//       {/* Mobile Menu */}
-//       <div
-//         className={`fixed inset-0 z-100 bg-black/40 backdrop-blur flex flex-col items-center justify-center text-lg gap-8 md:hidden transition-transform duration-400 ${
-//           isOpen ? "translate-x-0" : "-translate-x-full"
-//         }`}
-//       >
-//         {navlinks.map((link) => (
-//           <NavLink
-//             key={link.name}
-//             to={link.href}
-//             onClick={() => setIsOpen(false)}
-//           >
-//             {link.name}
-//           </NavLink>
-//         ))}
-
-//         {/* Close Button */}
-//         <button
-//           onClick={() => setIsOpen(false)}
-//           className="active:ring-3 active:ring-white aspect-square size-10 p-1 items-center justify-center bg-pink-600 hover:bg-pink-700 transition text-white rounded-md flex"
-//         >
-//           <XIcon />
-//         </button>
-//       </div>
-//     </>
-//   );
-// }

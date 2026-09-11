@@ -3,11 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SimplieLearn</title>
+    <title>SimpliLearn — Modern Learning Platform</title>
+    <meta
+      name="description"
+      content="SimpliLearn is a modern learning platform: structured courses, expert instructors, progress tracking, and one subscription for the full catalog."
+    />
+    <meta name="theme-color" content="#020617" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://checkout.razorpay.com" />
+    <!-- Razorpay checkout: loaded with defer so it never blocks first paint,
+         and guaranteed present before the deferred app bundle opens a modal -->
+    <script defer src="https://checkout.razorpay.com/v1/checkout.js"></script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   </body>
 </html>

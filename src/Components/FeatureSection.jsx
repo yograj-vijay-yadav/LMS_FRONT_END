@@ -1,92 +1,60 @@
-import SectionTitle from "../Components/SectionTitle";
-import { ArrowUpRight } from "lucide-react";
-import { motion } from "motion/react";
+import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+
 import { featuresData } from "../Constants/features";
+import SectionTitle from "./SectionTitle";
 
 export default function FeaturesSection() {
-    return (
-        <div id="features" className="px-4 md:px-16 lg:px-24 xl:px-32">
-            <SectionTitle 
-                text1="LMS Features"
-                text2="Everything you need to teach and learn"
-                text3="From content delivery to learner progress reporting—run your full learning lifecycle in one platform."
-            />
-            <div className="flex flex-wrap items-center justify-center gap-6 md:gap-4 mt-16 px-6">
-                {featuresData.map((feature, index) => (
-                    <motion.div 
-                        key={index} 
-                        className={`${index === 1 ? 'p-px rounded-[13px] bg-linear-to-br from-pink-600 to-slate-800' : ''}`}
-                        initial={{ y: 150, opacity: 0 }}
-                        whileInView={{ y: 0, opacity: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.15, type: "spring", stiffness: 320, damping: 70, mass: 1 }}
-                    >
-                        <div className="p-6 rounded-xl space-y-4 border border-slate-800 bg-slate-950 max-w-80 w-full">
-                            {feature.icon}
-                            <h3 className="text-base font-medium text-white">
-                                {feature.title}
-                            </h3>
-                            <p className="text-slate-400 line-clamp-2 pb-4">
-                                {feature.description}
-                            </p>
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
-            <div className="mt-40 relative mx-auto max-w-5xl">
-                <div className="absolute z-50 size-100 -top-10 -left-20 aspect-square rounded-full bg-pink-500/40 blur-3xl"></div>
-                <motion.p 
-                    className="text-slate-300 text-lg text-left max-w-3xl"
-                    initial={{ y: 150, opacity: 0 }}
-                    whileInView={{ y: 0, opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ type: "spring", stiffness: 320, damping: 70, mass: 1 }}
-                 >
-                   Keep instructors, learners, and admins aligned with a single dashboard for assignments, attendance,
-                    quizzes, and certification workflows.     
-               </motion.p>
-                <div className="grid grid-cols-1 md:grid-cols-3 mt-8 gap-10">
-                    <motion.div 
-                        className="md:col-span-2"
-                        initial={{ y: 150, opacity: 0 }}
-                        whileInView={{ y: 0, opacity: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ type: "spring", stiffness: 240, damping: 70, mass: 1 }}
-                    >
-                        <img 
-                            className="h-full w-auto" 
-                            src="/assets/features-showcase-1.png" 
-                            alt="features showcase" 
-                            width={1000} 
-                            height={500} 
-                        />
-                    </motion.div>
-                    <motion.div 
-                        className="md:col-span-1"
-                        initial={{ y: 150, opacity: 0 }}
-                        whileInView={{ y: 0, opacity: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.15, type: "spring", stiffness: 320, damping: 70, mass: 1 }}
-                    >
-                        <img 
-                            src="/assets/features-showcase-2.png" 
-                            alt="features showcase" 
-                            width={1000} 
-                            height={500} 
-                            className="hover:-translate-y-0.5 transition duration-300" 
-                        />
-                        <h3 className="text-[24px]/7.5 text-slate-300 font-medium mt-6">
-                            Manage outcomes, not just content 
-                        </h3>
-                        <p className="text-slate-300 mt-2">
-                            Get actionable insights on learner engagement, assessment performance, and completion trends.                        </p>
-                        <a href="/courses" className="group flex items-center gap-2 mt-4 text-pink-600 hover:text-pink-700 transition">
-                            Browse all courses
-                            <ArrowUpRight className="size-5 group-hover:translate-x-0.5 transition duration-300" />
-                        </a>
-                    </motion.div>
+  return (
+    <section id="features" className="py-20">
+      <div className="container-page">
+        <SectionTitle
+          text1="Platform"
+          text2="Everything you need to teach and learn"
+          text3="From content delivery to learner progress — run your full learning lifecycle in one platform."
+        />
+
+        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {featuresData.map((feature, index) => {
+            const Icon = feature.icon;
+            return (
+              <div
+                key={feature.title}
+                className="card card-interactive anim-fade-up p-6"
+                style={{ animationDelay: `${index * 60}ms` }}
+              >
+                <div className="flex size-11 items-center justify-center rounded-lg bg-rose-500/10 text-rose-400">
+                  <Icon className="size-5.5" aria-hidden="true" />
                 </div>
-            </div>
+                <h3 className="mt-4 text-base font-semibold">
+                  {feature.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                  {feature.description}
+                </p>
+              </div>
+            );
+          })}
         </div>
-    );
+
+        {/* Highlight banner */}
+        <div className="card anim-fade-up mt-14 flex flex-col items-start justify-between gap-6 p-8 sm:flex-row sm:items-center">
+          <div>
+            <h3 className="text-xl font-semibold">
+              Manage outcomes, not just content
+            </h3>
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-400">
+              Keep instructors, learners, and admins aligned with a single
+              dashboard for courses, lectures, subscriptions, and
+              certification workflows.
+            </p>
+          </div>
+          <Link to="/courses" className="btn btn-primary shrink-0">
+            Browse all courses
+            <ArrowRight className="size-4" aria-hidden="true" />
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
 }

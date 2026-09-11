@@ -1,30 +1,19 @@
 import Footer from "../Components/Footer";
+import Navbar from "../Components/Navbar";
 
-
+/**
+ * Shared app shell: fixed top navigation, page content, and footer.
+ * Every page renders inside this layout for consistent spacing/navigation.
+ */
 function HomeLayout({ children }) {
   return (
-    <div className="min-h-screen w-full bg-black">  
-      <main className="flex-grow">{children}</main>
+    <div className="flex min-h-screen w-full flex-col bg-slate-950">
+      <Navbar />
+      {/* pt-16 offsets the fixed navbar height */}
+      <main className="flex-grow pt-16">{children}</main>
       <Footer />
     </div>
   );
 }
 
 export default HomeLayout;
-
-
-
-
-
-
-
-
-
-      //  <li><Link to="/">Home</Link></li>
-      //       <li><Link to="/admin/dashboard">Admin Dashboard</Link></li>
-      //       <li> {isLoggedIn && role === "ADMIN" && (
-      //         <Link to="/course/create"> Create new course</Link>
-      //       )}</li>
-      //       <li><Link to="/courses">All Courses</Link></li>
-      //       <li><Link to="/contact">Contact Us</Link></li>
-      //       <li><Link to="/about">About Us</Link></li>

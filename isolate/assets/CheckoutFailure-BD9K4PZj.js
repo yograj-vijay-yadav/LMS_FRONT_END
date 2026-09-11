@@ -1,0 +1,11 @@
+import{c as s,j as e,H as a,L as t}from"./index-CSbY9TcY.js";/**
+ * @license lucide-react v0.556.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const c=[["circle",{cx:"12",cy:"12",r:"10",key:"1mglay"}],["path",{d:"m15 9-6 6",key:"1uzhvr"}],["path",{d:"m9 9 6 6",key:"z0biqf"}]],n=s("circle-x",c);/**
+ * @license lucide-react v0.556.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const l=[["path",{d:"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8",key:"1357e3"}],["path",{d:"M3 3v5h5",key:"1xhq8a"}]],r=s("rotate-ccw",l);function d(){return e.jsx(a,{children:e.jsx("div",{className:"container-page flex min-h-[80vh] items-center justify-center py-14",children:e.jsx("div",{className:"anim-fade-up w-full max-w-lg text-center",children:e.jsxs("div",{className:"card p-8 sm:p-10",children:[e.jsx("div",{className:"mx-auto flex size-16 items-center justify-center rounded-full bg-red-500/10",children:e.jsx(n,{className:"size-9 text-red-400","aria-hidden":"true"})}),e.jsx("h1",{className:"mt-6 text-2xl font-bold",children:"Payment failed"}),e.jsx("p",{className:"mt-2 text-sm leading-relaxed text-slate-400",children:"We couldn’t process your payment. No charge has been made — you can safely try again."}),e.jsxs("div",{className:"mt-6 rounded-lg border border-slate-800 bg-slate-900/70 p-4 text-left",children:[e.jsx("p",{className:"text-xs font-semibold uppercase tracking-wider text-slate-500",children:"Common reasons"}),e.jsxs("ul",{className:"mt-2 space-y-1.5 text-sm text-slate-400",children:[e.jsx("li",{children:"• Insufficient balance in the selected payment method"}),e.jsx("li",{children:"• Incorrect payment details entered"}),e.jsx("li",{children:"• Temporary network issue with the bank"})]})]}),e.jsxs("div",{className:"mt-8 space-y-3",children:[e.jsxs(t,{to:"/checkout",className:"btn btn-primary w-full py-3",children:[e.jsx(r,{className:"size-4","aria-hidden":"true"}),"Try again"]}),e.jsx(t,{to:"/contact",className:"btn btn-secondary w-full",children:"Contact support"})]})]})})})})}export{d as default};

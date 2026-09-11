@@ -1,166 +1,129 @@
+import { ChevronDown, MessageCircleQuestion } from "lucide-react";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Mail, MessageCircleQuestion } from "lucide-react";
+import { Link } from "react-router-dom";
 
-/* ---------------- utils (cn) ---------------- */
-function cn(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+const faqs = [
+  {
+    question: "What courses are available with a subscription?",
+    answer:
+      "Your subscription gives you unlimited access to all available courses, including new releases added regularly.",
+  },
+  {
+    question: "Can I access the LMS on mobile devices?",
+    answer:
+      "Yes. The LMS works seamlessly on desktop, tablet, and mobile browsers with responsive layouts everywhere.",
+  },
+  {
+    question: "Do I need to pay before starting a course?",
+    answer:
+      "You can browse the full catalog for free — full lecture access requires an active subscription.",
+  },
+  {
+    question: "How do I manage my subscription?",
+    answer:
+      "You can view your subscription status any time from your profile, where you can also cancel it.",
+  },
+  {
+    question: "Is there support if I face issues?",
+    answer:
+      "Yes — reach out through the contact page and our team will get back to you quickly.",
+  },
+];
 
-/* ---------------- Badge ---------------- */
-function Badge({ children, className = "" }) {
+function FaqItem({ question, answer, isOpen, onToggle, index }) {
   return (
-    <span
-      className={cn(
-        "inline-flex items-center justify-center rounded-md border px-3 py-1 text-xs font-medium uppercase tracking-wider",
-        "border-pink-500 text-pink-500",
-        className
-      )}
-    >
-      {children}
-    </span>
-  );
-}
-
-/* ---------------- FAQ Item ---------------- */
-function FAQItem({ question, answer, index, isOpen, onToggle }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.1 }}
-      className={cn(
-        "rounded-lg border border-white/10 transition-all duration-300",
-        isOpen ? "bg-white/5 shadow-lg" : "hover:bg-white/5"
-      )}
+    <div
+      className={`card overflow-hidden transition-colors duration-200 ${
+        isOpen ? "border-rose-500/40" : "hover:border-slate-700"
+      }`}
+      style={{ animationDelay: `${index * 50}ms` }}
     >
       <button
-        onClick={onToggle}
-        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition hover:bg-white/5"
         type="button"
+        onClick={onToggle}
+        aria-expanded={isOpen}
+        aria-controls={`faq-panel-${index}`}
+        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
       >
-        <h3
-          className={cn(
-            "text-left text-base font-medium",
-            isOpen ? "text-pink-400" : "text-white/80"
-          )}
+        <span
+          className={`text-base font-medium ${
+            isOpen ? "text-white" : "text-slate-200"
+          }`}
         >
           {question}
-        </h3>
-
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.3 }}
-          className={cn(
-            "rounded-full p-1",
-            isOpen ? "text-pink-400" : "text-white/50"
-          )}
-        >
-          <ChevronDown className="h-4 w-4" />
-        </motion.div>
+        </span>
+        <ChevronDown
+          className={`size-4 shrink-0 transition-transform duration-200 ${
+            isOpen ? "rotate-180 text-rose-400" : "text-slate-500"
+          }`}
+          aria-hidden="true"
+        />
       </button>
-
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="border-t border-white/10 px-6 pb-4 pt-2">
-              <p className="text-sm leading-relaxed text-white/60">{answer}</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+      <div
+        id={`faq-panel-${index}`}
+        className={`grid transition-[grid-template-rows] duration-200 ease-out ${
+          isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <p className="border-t border-slate-800 px-5 pb-4 pt-3 text-sm leading-relaxed text-slate-400">
+            {answer}
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
 
-/* ---------------- Main Component ---------------- */
 export default function Faqs() {
-  const faqs = [
-    {
-      question: "What courses are available with a subscription?",
-      answer:
-        "Our subscription gives you unlimited access to all available courses, including new releases added regularly.",
-    },
-    {
-      question: "Can I access the LMS on mobile devices?",
-      answer:
-        "Yes, the LMS works seamlessly on desktop, tablet, and mobile browsers.",
-    },
-    {
-      question: "Do I need to pay before starting a course?",
-      answer:
-        "You can explore free sample lessons, but full course access requires an active subscription.",
-    },
-    {
-      question: "How do I manage my subscription?",
-      answer:
-        "You can upgrade, downgrade, or cancel your subscription anytime from your account settings.",
-    },
-    {
-      question: "Is there support if I face issues?",
-      answer:
-        "Yes, you can reach out via the support page or use our chatbot for quick help.",
-    },
-  ];
-
   const [openIndex, setOpenIndex] = useState(-1);
 
   return (
-    <section className="bg-black px-4 py-16 text-white md:px-8">
-      <div className="mx-auto max-w-4xl rounded-3xl border border-pink-500/20 bg-gradient-to-b from-zinc-900 to-black p-6 shadow-[0_0_40px_rgba(236,72,153,0.12)] md:p-10">
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-pink-500/15 text-pink-400">
-            <MessageCircleQuestion className="h-6 w-6" />
-          </div>
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-pink-400">
-            FAQs
-          </p>
-          <h2 className="mt-3 text-3xl font-bold md:text-4xl">
-            Easy answers to common questions
-          </h2>
-          <p className="mt-3 text-sm text-white/65 md:text-base">
-            Everything you need to know about our LMS subscription
-          </p>
-        </div>
-
-        {/* FAQ List */}
-        <div className="space-y-4">
-          {faqs.map((faq, index) => (
-            <FAQItem
-              key={faq.question}
-              {...faq}
-              index={index}
-              isOpen={openIndex === index}
-              onToggle={() =>
-                setOpenIndex(openIndex === index ? -1 : index)
-              }
-            />
-          ))}
-        </div>
-
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mx-auto mt-16 max-w-md rounded-xl border border-pink-500/30 bg-pink-500/10 p-6 text-center"
-        >
-          <div className="mx-auto mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-pink-500/20 text-pink-400">
-            <Mail className="h-4 w-4" />
+    <section className="py-20">
+      <div className="container-page">
+        <div className="mx-auto max-w-3xl">
+          <div className="anim-fade-up text-center">
+            <span className="badge badge-rose font-semibold uppercase tracking-wider">
+              FAQs
+            </span>
+            <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
+              Easy answers to common questions
+            </h2>
+            <p className="mt-4 text-base text-slate-400">
+              Everything you need to know about the learning platform.
+            </p>
           </div>
 
-          <p className="text-sm font-medium text-white">Still have questions?</p>
-          <p className="mt-1 text-xs text-white/60">We’re here to help you</p>
+          <div className="stagger mt-10 space-y-3">
+            {faqs.map((faq, index) => (
+              <FaqItem
+                key={faq.question}
+                question={faq.question}
+                answer={faq.answer}
+                index={index}
+                isOpen={openIndex === index}
+                onToggle={() =>
+                  setOpenIndex(openIndex === index ? -1 : index)
+                }
+              />
+            ))}
+          </div>
 
-          <button className="mt-4 rounded-md bg-pink-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-pink-600">
-            Contact Support
-          </button>
-        </motion.div>
+          <div className="card anim-fade-up mt-12 p-6 text-center">
+            <div className="mx-auto flex size-10 items-center justify-center rounded-full bg-rose-500/10 text-rose-400">
+              <MessageCircleQuestion className="size-5" aria-hidden="true" />
+            </div>
+            <p className="mt-3 text-sm font-medium text-white">
+              Still have questions?
+            </p>
+            <p className="mt-1 text-xs text-slate-400">
+              Our team is here to help you.
+            </p>
+            <Link to="/contact" className="btn btn-primary btn-sm mt-4">
+              Contact support
+            </Link>
+          </div>
+        </div>
       </div>
     </section>
   );

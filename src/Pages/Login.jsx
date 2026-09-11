@@ -1,166 +1,193 @@
-import { useState } from 'react';
-import { toast } from 'react-hot-toast';
-import { useDispatch } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, LogIn, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Lock, LogIn, Mail } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
-import HomeLayout from '../Layouts/HomeLayout';
-import { login } from '../Redux/Slices/AuthSlice';
+import HomeLayout from "../Layouts/HomeLayout";
+import { login } from "../Redux/Slices/AuthSlice";
 
 function Login() {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    const [loginData, setLoginData] = useState({
-        email: "",
-        password: "",
-    });
-    const [showPassword, setShowPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+  const isLoggedIn = useSelector((state) => state?.auth?.isLoggedIn);
 
-    function handleUserInput(e) {
-        const { name, value } = e.target;
-        setLoginData({
-            ...loginData,
-            [name]: value
-        });
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: "",
+  });
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  function handleUserInput(event) {
+    const { name, value } = event.target;
+    setLoginData((prev) => ({ ...prev, [name]: value }));
+    setFieldErrors((prev) => ({ ...prev, [name]: undefined }));
+  }
+
+  function validate() {
+    const errors = {};
+    if (!loginData.email.trim()) errors.email = "Email is required";
+    if (!loginData.password) errors.password = "Password is required";
+    return errors;
+  }
+
+  // Already signed in? Skip the form and go straight to the app
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate(location.state?.from || "/courses", { replace: true });
+    }
+  }, [isLoggedIn, navigate, location.state]);
+
+  async function onLogin(event) {
+    event.preventDefault();
+
+    const errors = validate();
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
     }
 
-    async function onLogin(event) {
-        event.preventDefault();
-        if (!loginData.email || !loginData.password) {
-            toast.error("Please fill all the details");
-            return;
-        }
+    setIsLoading(true);
+    const response = await dispatch(login(loginData));
+    setIsLoading(false);
 
-        setIsLoading(true);
-        const response = await dispatch(login(loginData));
-        setIsLoading(false);
-
-        if (response?.payload?.success) {
-            toast.success("Login successful!");
-            navigate("/");
-        }
-
-        setLoginData({
-            email: "",
-            password: "",
-        });
+    // The thunk returns the raw axios response, so success lives under `.data`
+    const payload = response?.payload?.data;
+    if (payload?.success) {
+      // Send the user where RequireAuth intended, or to their default landing page
+      const userRole = payload?.user?.role;
+      navigate(location.state?.from || (userRole === "ADMIN" ? "/admin/dashboard" : "/courses"), {
+        replace: true,
+      });
     }
+  }
 
-    return (
-        <HomeLayout>
-            <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12"
-                style={{
-                    background: "linear-gradient(to bottom, #000000, #2a0a1a, #1a0010)"
-                }}
-            >
-                <div className="w-full max-w-md">
-                    {/* Login Card - Same style as Contact page */}
-                    <div 
-                        className="rounded-2xl border border-pink-500 px-8 py-10 shadow-2xl"
-                        style={{
-                            background: "linear-gradient(to bottom, #1a0010, #3b0a2a, #000000)"
-                        }}
-                    >
-                        {/* Header */}
-                        <div className="text-center mb-8">
-                            <div className="inline-flex items-center justify-center w-16 h-16 border border-pink-500 rounded-full mb-4">
-                                <LogIn className="text-pink-400" size={28} />
-                            </div>
-                            <h2 className="bg-gradient-to-r from-pink-400 via-pink-500 to-pink-700 bg-clip-text text-transparent text-4xl font-bold">
-                                Welcome Back!
-                            </h2>
-                            <p className="text-gray-400 mt-2">Login to your account</p>
-                        </div>
-
-                        {/* Form */}
-                        <form onSubmit={onLogin} className="space-y-5">
-                            {/* Email Field */}
-                            <div>
-                                <label className="text-lg font-medium text-gray-300">
-                                    Email
-                                </label>
-                                <div className="relative mt-2">
-                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        value={loginData.email}
-                                        onChange={handleUserInput}
-                                        placeholder="Enter your email"
-                                        className="w-full pl-10 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-pink-500 transition text-white placeholder-gray-500"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Password Field */}
-                            <div>
-                                <label className="text-lg font-medium text-gray-300">
-                                    Password
-                                </label>
-                                <div className="relative mt-2">
-                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
-                                    <input
-                                        type={showPassword ? "text" : "password"}
-                                        name="password"
-                                        value={loginData.password}
-                                        onChange={handleUserInput}
-                                        placeholder="Enter your password"
-                                        className="w-full pl-10 pr-12 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-pink-500 transition text-white placeholder-gray-500"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-pink-400 transition"
-                                    >
-                                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Forgot Password */}
-                            <div className="text-right">
-                                <Link to="/forgot-password" className="text-sm text-pink-400 hover:text-pink-300 transition">
-                                    Forgot Password?
-                                </Link>
-                            </div>
-
-                            {/* Login Button - Same as Contact page submit button */}
-                            <button
-                                type="submit"
-                                disabled={isLoading}
-                                className="w-full bg-pink-500 hover:bg-pink-600 transition py-3 rounded-lg font-semibold text-white flex items-center justify-center gap-2 text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {isLoading ? (
-                                    "Logging in..."
-                                ) : (
-                                    <>
-                                        Login <LogIn size={18} />
-                                    </>
-                                )}
-                            </button>
-
-                            {/* Signup Link */}
-                            <div className="text-center pt-4">
-                                <p className="text-gray-400">
-                                    Don't have an account?{' '}
-                                    <Link to="/signup" className="text-pink-400 hover:text-pink-300 font-semibold transition">
-                                        Sign up
-                                    </Link>
-                                </p>
-                            </div>
-                        </form>
-                    </div>
-
-                    {/* Footer Text */}
-                    <div className="text-center mt-6">
-                        <p className="text-gray-500 text-sm">Secure login powered by industry-standard encryption</p>
-                    </div>
-                </div>
+  return (
+    <HomeLayout>
+      <div className="container-page flex min-h-[calc(100vh-4rem)] items-center justify-center py-14">
+        <div className="anim-fade-up w-full max-w-md">
+          <div className="card p-8 shadow-xl shadow-black/20">
+            {/* Header */}
+            <div className="mb-8 text-center">
+              <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-rose-500/10 text-rose-400">
+                <LogIn className="size-5" aria-hidden="true" />
+              </div>
+              <h1 className="mt-4 text-2xl font-bold">Welcome back</h1>
+              <p className="mt-1.5 text-sm text-slate-400">
+                Log in to continue learning
+              </p>
             </div>
-        </HomeLayout>
-    );
+
+            {/* Form */}
+            <form onSubmit={onLogin} noValidate className="space-y-5">
+              <div>
+                <label htmlFor="email" className="label">
+                  Email
+                </label>
+                <div className="relative">
+                  <Mail
+                    className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate-500"
+                    aria-hidden="true"
+                  />
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    value={loginData.email}
+                    onChange={handleUserInput}
+                    placeholder="you@example.com"
+                    aria-invalid={Boolean(fieldErrors.email)}
+                    className={`input pl-10 ${fieldErrors.email ? "input-error" : ""}`}
+                  />
+                </div>
+                {fieldErrors.email && (
+                  <p className="field-error" role="alert">
+                    {fieldErrors.email}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="password" className="label">
+                  Password
+                </label>
+                <div className="relative">
+                  <Lock
+                    className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate-500"
+                    aria-hidden="true"
+                  />
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    value={loginData.password}
+                    onChange={handleUserInput}
+                    placeholder="Enter your password"
+                    aria-invalid={Boolean(fieldErrors.password)}
+                    className={`input pl-10 pr-11 ${fieldErrors.password ? "input-error" : ""}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((show) => !show)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-500 transition-colors hover:text-slate-300"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="size-4" aria-hidden="true" />
+                    ) : (
+                      <Eye className="size-4" aria-hidden="true" />
+                    )}
+                  </button>
+                </div>
+                {fieldErrors.password && (
+                  <p className="field-error" role="alert">
+                    {fieldErrors.password}
+                  </p>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="btn btn-primary w-full py-3"
+                aria-busy={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <span
+                      className="inline-block size-4 animate-spin rounded-full border-2 border-white/30 border-t-white"
+                      aria-hidden="true"
+                    />
+                    Logging in...
+                  </>
+                ) : (
+                  <>
+                    Login
+                    <LogIn className="size-4" aria-hidden="true" />
+                  </>
+                )}
+              </button>
+
+              <p className="text-center text-sm text-slate-400">
+                Don&rsquo;t have an account?{" "}
+                <Link
+                  to="/signup"
+                  className="font-semibold text-rose-400 transition-colors hover:text-rose-300"
+                >
+                  Sign up
+                </Link>
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </HomeLayout>
+  );
 }
 
 export default Login;
