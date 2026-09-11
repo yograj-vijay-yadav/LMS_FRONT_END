@@ -1,13 +1,19 @@
-import { useEffect } from "react";
 import Lenis from "lenis";
+import { useEffect } from "react";
 
 export default function LenisScroll() {
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (prefersReducedMotion) return undefined;
+
     const lenis = new Lenis({
-      duration: 1.2,       // scroll speed
-      smoothWheel: true,   // enable smooth wheel scrolling
+      duration: 1.1,
+      smoothWheel: true,
       anchors: {
-        offset: -100,      // offset for anchor links (useful if you have a fixed header)
+        offset: -100,
       },
     });
 
@@ -16,12 +22,13 @@ export default function LenisScroll() {
       requestAnimationFrame(raf);
     }
 
-    requestAnimationFrame(raf);
+    const rafId = requestAnimationFrame(raf);
 
     return () => {
+      cancelAnimationFrame(rafId);
       lenis.destroy();
     };
   }, []);
 
-  return null; // this component doesn't render anything
+  return null;
 }

@@ -1,24 +1,47 @@
-import { BookOpen, BarChart3, Users, Award } from "lucide-react";
+import {
+  BarChart3,
+  BookOpen,
+  ClipboardCheck,
+  GraduationCap,
+  MessageSquare,
+  Users,
+} from "lucide-react";
 
 export const featuresData = [
   {
-    icon: <BookOpen className="text-pink-600 size-6" />,
-    title: "Course Management",
-    description: "Create, organize, and deliver courses with ease.",
+    title: "Structured courses",
+    description:
+      "Every course is broken into clear lectures so learners always know what comes next.",
+    icon: BookOpen,
   },
   {
-    icon: <BarChart3 className="text-pink-600 size-6" />,
-    title: "Progress Tracking",
-    description: "Monitor learner progress with detailed analytics and reports.",
+    title: "Progress tracking",
+    description:
+      "Learners see exactly where they stand in a course and what to finish next.",
+    icon: BarChart3,
   },
   {
-    icon: <Users className="text-pink-600 size-6" />,
-    title: "Collaboration Tools",
-    description: "Enable discussions, forums, and peer-to-peer learning.",
+    title: "Simple enrollment",
+    description:
+      "One subscription unlocks the full catalog — no per-course checkout friction.",
+    icon: GraduationCap,
   },
   {
-    icon: <Award className="text-pink-600 size-6" />,
-    title: "Certification",
-    description: "Award verifiable certificates upon course completion.",
+    title: "Instructor dashboards",
+    description:
+      "Create courses, upload lectures, and manage your catalog from one place.",
+    icon: Users,
+  },
+  {
+    title: "Secure payments",
+    description:
+      "Trusted Razorpay checkout with instant verification and clear billing states.",
+    icon: ClipboardCheck,
+  },
+  {
+    title: "Learner support",
+    description:
+      "Direct contact channel so questions reach the team and get answered fast.",
+    icon: MessageSquare,
   },
 ];

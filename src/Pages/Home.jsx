@@ -1,23 +1,18 @@
-import HeroSection from "../Components/HeroSection";
 import Faqs from "../Components/Faqs";
-import HomeLayout from "../Layouts/HomeLayout";
 import FeaturesSection from "../Components/FeatureSection";
+import HeroSection from "../Components/HeroSection";
 import SimplePricing from "../Components/Pricing";
-import Navbar from "../Components/Navbar";
+import HomeLayout from "../Layouts/HomeLayout";
 
 function Home() {
-    
-       return (
-        <div>
-        <HomeLayout>
-            <Navbar />
-            <HeroSection />
-            <FeaturesSection />
-            <SimplePricing />
-            <Faqs />
-        </HomeLayout>
-        </div>
-    ) 
+  return (
+    <HomeLayout>
+      <HeroSection />
+      <FeaturesSection />
+      <SimplePricing />
+      <Faqs />
+    </HomeLayout>
+  );
 }
 
 export default Home;

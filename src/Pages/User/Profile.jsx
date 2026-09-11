@@ -1,168 +1,149 @@
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  BadgeCheck,
+  CreditCard,
+  Edit3,
+  KeyRound,
+  ShieldX,
+  User,
+} from "lucide-react";
+import { useState } from "react";
 import toast from "react-hot-toast";
-import { User, Mail, BadgeCheck, CreditCard, Edit, Key, XCircle } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
+import ConfirmDialog from "../../Components/Ui/ConfirmDialog";
 import HomeLayout from "../../Layouts/HomeLayout";
 import { getUserData } from "../../Redux/Slices/AuthSlice";
-// Remove cancelCourseBundle import if not available
+import { cancelCourseBundle } from "../../Redux/Slices/RazorpaySlice";
 
 function Profile() {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const userData = useSelector((state) => state?.auth?.data);
 
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+
+  const isSubscribed = userData?.subscription?.status === "active";
+
   async function handleCancellation() {
-    toast.loading("Initiating cancellation...");
-    
-    // Option 1: If you have the action, uncomment this
-    // await dispatch(cancelCourseBundle());
-    
-    // Option 2: If you don't have it yet, show message
-    toast.dismiss();
-    toast.error("Cancellation feature coming soon!");
-    
-    // Option 3: Make API call directly
-    // try {
-    //   const response = await axiosInstance.post("/api/cancel-subscription");
-    //   if (response.data.success) {
-    //     await dispatch(getUserData());
-    //     toast.success("Cancellation completed!");
-    //     navigate("/");
-    //   }
-    // } catch (error) {
-    //   toast.error("Failed to cancel subscription");
-    // }
+    setIsCancelling(true);
+    const response = await dispatch(cancelCourseBundle());
+    setIsCancelling(false);
+    setShowCancelDialog(false);
+
+    if (response?.payload?.success) {
+      await dispatch(getUserData());
+      toast.success("Subscription cancelled");
+    }
   }
 
   return (
     <HomeLayout>
-      <div 
-        className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12"
-        style={{
-          background: "linear-gradient(to bottom, #000000, #2a0a1a, #1a0010)"
-        }}
-      >
-        <div className="w-full max-w-md">
-          {/* Profile Card */}
-          <div
-            className="rounded-2xl border border-pink-500 px-8 py-10 shadow-2xl"
-            style={{
-              background: "linear-gradient(to bottom, #1a0010, #3b0a2a, #000000)"
-            }}
-          >
-            
+      <div className="container-page flex min-h-[80vh] items-center justify-center py-14">
+        <div className="anim-fade-up w-full max-w-lg">
+          <div className="card p-8 shadow-xl shadow-black/20">
             {/* Header */}
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 border border-pink-500 rounded-full mb-4">
-                <User className="text-pink-400" size={28} />
-              </div>
-              <h2 className="bg-gradient-to-r from-pink-400 via-pink-500 to-pink-700 bg-clip-text text-transparent text-3xl font-bold">
-                My Profile
-              </h2>
-              <p className="text-gray-400 mt-2">Your personal information</p>
-            </div>
-
-            {/* Avatar */}
-            <div className="flex justify-center mb-6">
-              <div className="relative">
+            <div className="text-center">
+              <div className="relative mx-auto w-fit">
                 {userData?.avatar?.secure_url ? (
                   <img
                     src={userData?.avatar?.secure_url}
-                    alt="User Avatar"
-                    className="w-32 h-32 rounded-full border-4 border-pink-500 shadow-lg object-cover"
+                    alt={`${userData?.fullName || "User"}'s avatar`}
+                    className="size-24 rounded-full border-2 border-rose-500/60 object-cover"
                   />
                 ) : (
-                  <div className="w-32 h-32 rounded-full border-4 border-pink-500 shadow-lg flex items-center justify-center bg-gray-900">
-                    <User className="text-pink-400" size={48} />
+                  <div className="flex size-24 items-center justify-center rounded-full border-2 border-slate-700 bg-slate-900">
+                    <User className="size-10 text-slate-500" aria-hidden="true" />
                   </div>
                 )}
-                <div className="absolute bottom-0 right-0 bg-pink-500 rounded-full p-1.5 border-2 border-black">
-                  <BadgeCheck size={14} className="text-white" />
-                </div>
+                <span className="absolute -bottom-1 -right-1 flex size-7 items-center justify-center rounded-full border-2 border-slate-950 bg-emerald-500 text-white">
+                  <BadgeCheck className="size-3.5" aria-hidden="true" />
+                </span>
               </div>
+
+              <h1 className="mt-5 text-2xl font-bold capitalize">
+                {userData?.fullName || "User"}
+              </h1>
+              <p className="mt-1 text-sm text-slate-400">
+                {userData?.email || "user@example.com"}
+              </p>
             </div>
 
-            {/* Name */}
-            <h3 className="text-2xl font-bold text-center capitalize text-pink-400 mb-6">
-              {userData?.fullName || "User Name"}
-            </h3>
-
-            {/* User Info */}
-            <div className="space-y-3 mb-6">
-              {/* Email */}
-              <div className="flex items-center gap-3 p-3 bg-gray-900/50 rounded-lg border border-gray-800">
-                <Mail className="text-pink-400" size={18} />
+            {/* Details */}
+            <div className="mt-8 space-y-3">
+              <div className="flex items-center gap-3 rounded-lg border border-slate-800 bg-slate-900/60 p-3.5">
+                <BadgeCheck className="size-4.5 shrink-0 text-rose-400" aria-hidden="true" />
                 <div className="flex-1">
-                  <p className="text-xs text-gray-500">Email Address</p>
-                  <p className="text-white text-sm">{userData?.email || "user@example.com"}</p>
-                </div>
-              </div>
-
-              {/* Role */}
-              <div className="flex items-center gap-3 p-3 bg-gray-900/50 rounded-lg border border-gray-800">
-                <BadgeCheck className="text-pink-400" size={18} />
-                <div className="flex-1">
-                  <p className="text-xs text-gray-500">Role</p>
-                  <p className="text-white text-sm capitalize">{userData?.role || "User"}</p>
-                </div>
-              </div>
-
-              {/* Subscription Status */}
-              <div className="flex items-center gap-3 p-3 bg-gray-900/50 rounded-lg border border-gray-800">
-                <CreditCard className="text-pink-400" size={18} />
-                <div className="flex-1">
-                  <p className="text-xs text-gray-500">Subscription Status</p>
-                  <p className={userData?.subscription?.status === "active" ? "text-green-400 font-semibold text-sm" : "text-red-400 font-semibold text-sm"}>
-                    {userData?.subscription?.status === "active" ? "Active ✓" : "Inactive ✗"}
+                  <p className="text-xs text-slate-500">Role</p>
+                  <p className="text-sm capitalize text-slate-200">
+                    {userData?.role || "User"}
                   </p>
                 </div>
               </div>
+
+              <div className="flex items-center gap-3 rounded-lg border border-slate-800 bg-slate-900/60 p-3.5">
+                <CreditCard className="size-4.5 shrink-0 text-rose-400" aria-hidden="true" />
+                <div className="flex-1">
+                  <p className="text-xs text-slate-500">Subscription</p>
+                  <p
+                    className={`text-sm font-medium ${
+                      isSubscribed ? "text-emerald-400" : "text-slate-400"
+                    }`}
+                  >
+                    {isSubscribed ? "Active" : "Not subscribed"}
+                  </p>
+                </div>
+                {isSubscribed && (
+                  <span className="badge badge-emerald">Premium</span>
+                )}
+              </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex gap-4 mb-4">
-              <Link
-                to="/changepassword"
-                className="flex-1 bg-pink-500 hover:bg-pink-600 transition-all duration-300 rounded-lg font-semibold py-2.5 text-white flex items-center justify-center gap-2 shadow-md"
-              >
-                <Key size={16} />
-                Change Password
+            {/* Actions */}
+            <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Link to="/user/editprofile" className="btn btn-primary">
+                <Edit3 className="size-4" aria-hidden="true" />
+                Edit profile
               </Link>
-              <Link
-                to="/user/editprofile"
-                className="flex-1 bg-pink-500 hover:bg-pink-600 transition-all duration-300 rounded-lg font-semibold py-2.5 text-white flex items-center justify-center gap-2 shadow-md"
-              >
-                <Edit size={16} />
-                Edit Profile
+              <Link to="/courses" className="btn btn-secondary">
+                <KeyRound className="size-4" aria-hidden="true" />
+                Browse courses
               </Link>
             </div>
 
-            {/* Cancel Subscription Button */}
-            {userData?.subscription?.status === "active" && (
-              <button
-                onClick={handleCancellation}
-                className="w-full bg-red-600 hover:bg-red-500 transition-all duration-300 rounded-lg font-semibold py-2.5 text-white flex items-center justify-center gap-2 shadow-md"
+            {!isSubscribed && (
+              <Link
+                to="/checkout"
+                className="btn btn-primary mt-3 w-full"
               >
-                <XCircle size={16} />
-                Cancel Subscription
-              </button>
+                Upgrade to premium
+              </Link>
             )}
 
-            {/* Back to Home Link */}
-            <div className="text-center mt-6 pt-4 border-t border-gray-800">
-              <Link to="/" className="text-gray-400 hover:text-pink-400 text-sm transition">
-                Back to Home
-              </Link>
-            </div>
-          </div>
-
-          {/* Footer Text */}
-          <div className="text-center mt-6">
-            <p className="text-gray-500 text-sm">Manage your profile and subscription settings</p>
+            {isSubscribed && (
+              <button
+                type="button"
+                onClick={() => setShowCancelDialog(true)}
+                className="btn btn-danger mt-3 w-full"
+              >
+                <ShieldX className="size-4" aria-hidden="true" />
+                Cancel subscription
+              </button>
+            )}
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={showCancelDialog}
+        destructive
+        title="Cancel subscription?"
+        message="You'll lose access to premium courses when your current billing period ends. Your progress will be saved."
+        confirmLabel="Yes, cancel"
+        busy={isCancelling}
+        onConfirm={handleCancellation}
+        onCancel={() => setShowCancelDialog(false)}
+      />
     </HomeLayout>
   );
 }
